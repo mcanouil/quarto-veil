@@ -1,0 +1,32 @@
+---
+title: Button option
+format: html
+filters:
+  - veil
+extensions:
+  veil:
+    button:
+      enabled: false
+    groups:
+      - name: backup
+        shown: false
+        label: Backup
+_quarto:
+  tests:
+    run:
+      extension-test:
+        description: The option button.enabled false adds no button.
+        check: "node veil-check.mjs"
+    html:
+      noErrors: true
+---
+
+## Introduction
+
+Plain text MKBTNPLAIN.
+
+::: {.veil group="backup"}
+
+Backup text MKBTNBACKUP.
+
+:::

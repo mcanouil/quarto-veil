@@ -1,0 +1,18 @@
+---
+title: Invalid group in an attribute
+format: typst
+filters:
+  - veil
+_quarto:
+  tests:
+    typst:
+      shouldError: true
+---
+
+## Section
+
+::: {.veil group="advanced Bad_Name"}
+
+Content.
+
+:::

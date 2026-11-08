@@ -1,0 +1,99 @@
+---
+title: "Keyboard and user interface"
+subtitle: "Keys, popover, toast, and button."
+description: "Learn the default keys, the popover, the toast, and the floating button, and how to change them."
+---
+
+## Keys
+
+| Key | Action |
+| --- | --- |
+| `u` | Opens and closes the popover. |
+| `]` | Moves the ladder setting one level up. |
+| `[` | Moves the ladder setting one level down. |
+
+: Default keys. {.striped .hover tbl-colwidths="[20,80]"}
+
+You can change the keys with the `keys` option.
+See the [Reference](reference.qmd#options).
+
+Veil compares `event.key`, not `keyCode`.
+Thus `[` and `]` work on keyboards where they need AltGr, such as AZERTY.
+The keys have no effect in an `input`, a `textarea`, a `select`, or an editable element.
+
+In Reveal.js, Veil adds entries to the `?` help.
+It adds the entries for `keys.level-up` and `keys.level-down` only when the document has a ladder.
+It adds the entry for `keys.menu` when that key is set.
+
+### Key conflicts
+
+A key can be the same as a key of Reveal.js or Quarto, or the same as another Veil key.
+Then Veil writes a warning, and the runtime does not bind this key.
+The keys that Veil checks are:
+
+- Reveal.js: `n`, Space, `p`, PageUp, PageDown, the arrows, `h`, `j`, `k`, `l`, Home, End, `b`, `v`, `.`, `;`, `:`, `/`, `f`, `a`, `g`, `?`, F1, Esc, and `o`.
+- Quarto decks: `s`, `m`, `e`, and `r`.
+- Quarto website search, in HTML: `f`, `/`, and `s`.
+- Chalkboard, when it is enabled: `c`, `b`, Delete, `-`, Backspace, `x`, `y`, and `d`.
+
+## Popover
+
+The popover has the controls for all the groups.
+
+- The ladder is a segmented control with one segment for `0` and one for each declared level.
+  A segment for a level with more than one group shows the labels with `+`, for example `Advanced + Notes`.
+- Below the ladder, there is one `role="switch"` control for each independent group.
+- While the popover is open, it stops key events, so Space and Esc do not go to Reveal.js.
+- Esc closes the popover.
+  The focus goes back to the element that had the focus before the popover opened, else to the document body.
+
+In Reveal.js, the Tools menu has one entry, "Veil…", that opens the popover.
+
+## Floating button
+
+The button is an eye icon.
+It opens the popover.
+
+- `button.enabled: auto` shows the button in `html` and not in `revealjs`.
+- `button.position` sets the corner: `top-left`, `top-right`, `bottom-left`, or `bottom-right`.
+  The default, `bottom-left`, does not cover the Quarto back-to-top button.
+- In Reveal.js, the button is outside `.slides`, so it does not scale with the slides.
+- The button and the popover are hidden in Reveal.js print mode and in `@media print`.
+
+## Toast
+
+The toast is a short message that shows after each change of state.
+It shows after a change from a key, the popover, the Tools menu, or the API.
+It does not show at load time.
+
+- For an independent group, the text is `Backup · hidden`.
+- For a ladder change, the text is `Level 2 · Advanced, Expert`, or `Level 0 · none`.
+- It is a small pill at the bottom centre of the screen.
+  It shows for about 1.5 seconds, then fades out.
+- A new toast replaces the current toast.
+- It has `role="status"` and `aria-live="polite"`.
+  With `prefers-reduced-motion`, it does not fade.
+
+The option `toast` sets where it shows:
+
+| Value | Where the toast shows |
+| --- | --- |
+| `auto` | In the speaker view while it is open, else in the main window. |
+| `main` | In the main window. |
+| `speaker` | In the speaker view only. |
+| `false` | Nowhere. |
+
+: Values of the option `toast`. {.striped .hover tbl-colwidths="[20,80]"}
+
+In HTML, `auto` and `speaker` are the same as `main`.
+
+## Theme
+
+Set these CSS custom properties to change the colours and the corner radius.
+
+- `--veil-bg`
+- `--veil-fg`
+- `--veil-accent`
+- `--veil-radius`
+
+The default values come from the Bootstrap variables in HTML and from the Reveal.js theme variables in Reveal.js.

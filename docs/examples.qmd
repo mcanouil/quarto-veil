@@ -1,0 +1,87 @@
+---
+title: "Examples"
+subtitle: "Veil running on this page."
+description: "See Veil work on this page: a ladder, an independent group, and the popover, rendered by the extension itself."
+filters:
+  - veil
+extensions:
+  veil:
+    groups:
+      - name: advanced
+        level: 1
+        shown: false
+        label: Advanced
+      - name: expert
+        level: 2
+        shown: false
+        label: Expert
+      - name: backup
+        shown: false
+        label: Backup
+    button:
+      enabled: true
+---
+
+This page uses Veil itself.
+The configuration is the `extensions: veil:` block in the front matter of [`examples.qmd`](https://github.com/mcanouil/quarto-veil/blob/main/docs/examples.qmd).
+It declares the groups `advanced` (level 1), `expert` (level 2), and `backup` (independent).
+Click the eye button at the bottom left, or press `u`, to open the popover.
+Press `]` and `[` to move the ladder setting.
+
+## A ladder
+
+The text below is in three groups.
+Each group is hidden by default.
+
+```markdown
+::: {.veil group="advanced"}
+Advanced: shown at level 1 and above.
+:::
+
+::: {.veil group="expert"}
+Expert: shown at level 2.
+:::
+```
+
+::: {.veil group="advanced"}
+Advanced: shown at level 1 and above.
+:::
+
+::: {.veil group="expert"}
+Expert: shown at level 2.
+:::
+
+## An independent group
+
+An independent group has no level.
+The ladder does not change it.
+
+```markdown
+::: {.veil group="backup"}
+Backup: shown only when you turn on this group.
+:::
+```
+
+::: {.veil group="backup"}
+Backup: shown only when you turn on this group.
+:::
+
+## Inline content
+
+A sentence can hold a [hidden aside]{.veil group="advanced"} in the middle.
+
+```markdown
+A sentence can hold a [hidden aside]{.veil group="advanced"} in the middle.
+```
+
+## More than one group
+
+An element in more than one group is visible only when all its groups are shown.
+
+::: {.veil group="advanced backup"}
+This block needs both `advanced` and `backup`.
+:::
+
+## Source
+
+The repository ships a short, standalone starting point you can copy: [`example.qmd`](https://github.com/mcanouil/quarto-veil/blob/main/example.qmd).

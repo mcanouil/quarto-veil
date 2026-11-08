@@ -1,0 +1,34 @@
+---
+title: Cross-reference to removed content
+format:
+  typst: default
+filters:
+  - veil
+extensions:
+  veil:
+    groups:
+      - name: advanced
+        shown: false
+_quarto:
+  tests:
+    run:
+      extension-test:
+        warnings: exhaustive
+    typst:
+      noErrors: true
+      printsMessage:
+        - level: WARN
+          regex: "`@sec-deep` points to content that the group `advanced` removed"
+          count: 1
+        - level: WARN
+          regex: "Unable to resolve crossref @sec-deep"
+          count: 1
+---
+
+## Overview
+
+See @sec-deep for details.
+
+## Deep dive {#sec-deep .veil group="advanced"}
+
+Deep content.

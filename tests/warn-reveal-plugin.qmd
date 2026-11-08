@@ -1,0 +1,26 @@
+---
+title: Filter without the Reveal.js plugin
+format:
+  revealjs: default
+filters:
+  - veil
+_quarto:
+  tests:
+    run:
+      extension-test:
+        warnings: exhaustive
+    revealjs:
+      noErrors: true
+      printsMessage:
+        - level: WARN
+          regex: "Add 'revealjs-plugins: \\[veil\\]'"
+          count: 1
+---
+
+## Shown slide
+
+Content.
+
+## Veiled slide {.veil}
+
+Content.

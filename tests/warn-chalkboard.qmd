@@ -1,0 +1,25 @@
+---
+title: Chalkboard
+format:
+  revealjs:
+    chalkboard: true
+filters:
+  - veil
+revealjs-plugins:
+  - veil
+_quarto:
+  tests:
+    run:
+      extension-test:
+        warnings: exhaustive
+    revealjs:
+      noErrors: true
+      printsMessage:
+        - level: WARN
+          regex: "The chalkboard is enabled and the document has veiled slides"
+          count: 1
+---
+
+## Hidden slide {.veil}
+
+Content.

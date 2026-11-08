@@ -1,0 +1,29 @@
+---
+title: Reveal.js slide level
+format:
+  revealjs:
+    slide-level: 3
+filters:
+  - veil
+revealjs-plugins:
+  - veil
+_quarto:
+  tests:
+    run:
+      extension-test:
+        description: The filter reads slide-level, so a header at that level stays a slide and a header below it goes into a veiled Div.
+    revealjs:
+      ensureFileRegexMatches:
+        - ['<section id="one"[^>]*data-veil-group="t"', '<div class="veil" data-veil-group="s">\s*<h4 id="sub"']
+        - ['<div class="veil" data-veil-group="t"', '<section id="sub"', '<h4[^>]*data-veil-group']
+---
+
+## Part
+
+### One {#one .veil group="t"}
+
+Text MKONE.
+
+#### Sub {#sub .veil group="s"}
+
+Sub text MKSUB.

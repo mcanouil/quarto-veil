@@ -1,0 +1,48 @@
+---
+title: References to kept content
+format:
+  typst: default
+filters:
+  - veil
+extensions:
+  veil:
+    groups:
+      - name: advanced
+        shown: false
+_quarto:
+  tests:
+    run:
+      extension-test:
+        warnings: exhaustive
+    typst:
+      noErrors: true
+      printsMessage:
+        - level: WARN
+          regex: "`@sec-gone` points to content that the group `advanced` removed"
+          count: 1
+        - level: WARN
+          regex: "Unable to resolve crossref @sec-gone"
+          count: 1
+---
+
+## Overview
+
+See @fig-kept and @tip-kept and @sec-gone.
+
+::: {#fig-kept}
+
+Kept figure content.
+
+Kept figure caption.
+
+:::
+
+::: {#tip-kept .callout-tip}
+
+Kept callout.
+
+:::
+
+## Gone {#sec-gone .veil group="advanced"}
+
+Removed.

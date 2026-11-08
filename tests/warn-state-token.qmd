@@ -1,0 +1,27 @@
+---
+title: Unknown state token
+format:
+  typst: default
+filters:
+  - veil
+extensions:
+  veil:
+    state: "Bad!"
+_quarto:
+  tests:
+    run:
+      extension-test:
+        warnings: exhaustive
+    typst:
+      noErrors: true
+      printsMessage:
+        - level: WARN
+          regex: "The option state has the token 'Bad!'"
+          count: 1
+---
+
+::: {.veil}
+
+Content.
+
+:::

@@ -1,0 +1,97 @@
+---
+title: "Authoring"
+subtitle: "Tag the content that the reader can hide."
+description: "Add the class veil and the attribute group to slides, sections, blocks, spans, callouts, figures, tables, and code cells."
+---
+
+## Enable Veil
+
+Add the filter to the document.
+For a Reveal.js deck, add the plugin too.
+
+```yaml
+filters:
+  - veil
+revealjs-plugins:
+  - veil
+```
+
+The `revealjs-plugins` entry has no effect in other formats.
+
+## Tag content
+
+The class `.veil` marks an element as veiled.
+The attribute `group` gives the names of its groups, separated by spaces.
+An element without `group` belongs to the default group `veil`.
+
+````markdown
+## Deep dive {.veil group="advanced"}
+
+::: {.veil group="expert"}
+Proof sketch.
+:::
+
+Some text [with an aside]{.veil}.
+
+::: {.callout-note .veil group="advanced"}
+A note for experts.
+:::
+
+![A detail](detail.png){#fig-detail .veil group="expert"}
+
+## Backup: raw numbers {.veil group="advanced backup"}
+````
+
+A group name matches `^[a-z][a-z0-9_-]*$`.
+Any other name stops the render with an error.
+
+For a code cell, set the class and the group in the cell options.
+
+````markdown
+```{{r}}
+#| classes: veil
+#| group: expert
+summary(model)
+```
+````
+
+With Jupyter, this form depends on the engine passing the option to the cell.
+If it does not work, put a `.veil` Div around the cell.
+
+## Headers and sections
+
+A header with `.veil` applies to the section that the header opens.
+In Reveal.js, this section is a slide.
+
+- A `#` header in Reveal.js opens a vertical stack.
+  `.veil` on it applies to the full stack.
+- In Reveal.js, a header below `slide-level` opens no slide.
+  Veil puts the header and its content in a `.veil` Div, so the result is the same as in HTML.
+- In Reveal.js, a `.veil` Div that contains headers at slide level is removed.
+  Veil puts its class and groups on each of these headers.
+  Content before the first header goes into a new `.veil` Div.
+- A `.veil` Div that contains `---` gets a warning, because a block cannot span two slides.
+
+## More than one group
+
+An element can belong to more than one group.
+
+```markdown
+## Backup: raw numbers {.veil group="advanced backup"}
+```
+
+The element is visible only when all its groups are shown.
+This rule also applies to a veiled element inside another veiled element.
+
+## Positions that Veil does not support
+
+| Not supported | Use instead |
+| --- | --- |
+| `.veil` on a tab header in a tabset | A `.veil` Div inside the tab. |
+| `.veil` on a callout title | `.veil` on the callout. |
+| `.veil` on the title slide | No alternative: the title slide comes from metadata. |
+
+: Unsupported positions of `.veil`. {.striped .hover tbl-colwidths="[40,60]"}
+
+A block cannot span two slides.
+Veil does not show hidden content when a link points into it.

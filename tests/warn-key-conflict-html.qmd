@@ -1,0 +1,30 @@
+---
+title: Search key conflict in HTML
+format:
+  html: default
+filters:
+  - veil
+extensions:
+  veil:
+    keys:
+      menu: "/"
+_quarto:
+  tests:
+    run:
+      extension-test:
+        warnings: exhaustive
+    html:
+      noErrors: true
+      printsMessage:
+        - level: WARN
+          regex: "The key '/' of keys.menu is the same as a key of Reveal.js or Quarto"
+          count: 1
+---
+
+## Section
+
+::: {.veil}
+
+Content.
+
+:::

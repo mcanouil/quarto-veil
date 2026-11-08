@@ -1,0 +1,59 @@
+---
+title: "Veil"
+subtitle: "One deck for many audiences"
+author: "Mickaël Canouil"
+format:
+  revealjs:
+    output-file: example-slides.html
+  html: default
+filters:
+  - veil
+revealjs-plugins:
+  - veil
+extensions:
+  veil:
+    groups:
+      - name: advanced
+        level: 1
+        shown: true
+        label: Advanced
+      - name: expert
+        level: 2
+        shown: false
+        label: Expert
+      - name: backup
+        shown: false
+        label: Backup
+---
+
+## Why Veil
+
+One deck can serve a short talk and a long talk.
+
+- Press `u` to open the Veil popover.
+- Press `]` to show more content.
+- Press `[` to show less content.
+
+## Going further {.veil group="advanced"}
+
+This slide is for an advanced audience.
+It is shown at level 1 and above.
+
+Some details are [only for experts]{.veil group="expert"}.
+
+## The proof {.veil group="expert"}
+
+This slide is shown at level 2.
+
+::: {.callout-note .veil group="expert"}
+A note for experts.
+:::
+
+## Summary
+
+Every audience sees this slide.
+
+## Backup: raw numbers {.veil group="advanced backup"}
+
+This slide needs both `advanced` and `backup`.
+The `backup` group has no level, so turn it on in the Veil popover.

@@ -1,0 +1,52 @@
+---
+title: Cross-reference after nested removed headers
+format:
+  typst: default
+filters:
+  - veil
+extensions:
+  veil:
+    groups:
+      - name: x
+        shown: false
+      - name: "y"
+        shown: false
+      - name: z
+        shown: false
+_quarto:
+  tests:
+    run:
+      extension-test:
+        warnings: exhaustive
+    typst:
+      noErrors: true
+      printsMessage:
+        - level: WARN
+          regex: "`@sec-deep` points to content that the group `z` removed"
+          count: 1
+        - level: WARN
+          regex: "Unable to resolve crossref @sec-deep"
+          count: 1
+---
+
+# Overview
+
+See @sec-deep for details.
+
+# S1 {.veil group="x"}
+
+## B {.veil group="y"}
+
+Text.
+
+# S2
+
+## B {.veil group="y"}
+
+Text.
+
+## C {.veil group="z"}
+
+### Deep dive {#sec-deep}
+
+Deep text.

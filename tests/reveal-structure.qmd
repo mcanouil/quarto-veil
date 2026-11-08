@@ -1,0 +1,87 @@
+---
+title: Reveal.js structure
+format:
+  revealjs:
+    slide-level: 2
+filters:
+  - veil
+revealjs-plugins:
+  - veil
+extensions:
+  veil:
+    groups:
+      - name: w
+      - name: s
+      - name: b
+        shown: false
+        label: 'Backup \</script> \<b>'
+    state: "-mid"
+_quarto:
+  tests:
+    run:
+      extension-test:
+        description: The Reveal.js block rules and the configuration.
+        check: "node veil-check.mjs"
+        warnings: exhaustive
+    revealjs:
+      noErrors: true
+      printsMessage:
+        - level: WARN
+          regex: "The group 'alpha' is used in the document but not declared"
+          count: 1
+        - level: WARN
+          regex: "The group 'zeta' is used in the document but not declared"
+          count: 1
+        - level: WARN
+          regex: "The id 'lead-wrapper' of a veiled Div is dropped, because its first header already has the id 'lead-header'"
+          count: 1
+      ensureFileRegexMatches:
+        - ['<section id="wrapped-one"[^>]*data-veil-group="w"', '<section id="wrapped-two"[^>]*data-veil-group="w"', '<div class="veil" data-veil-group="w">\s*<p>Text before the first header', '<div class="veil" data-veil-group="s">\s*<h3 id="sub-header"', '<section id="lead-header"[^>]*data-veil-group="w"', '<section id="hidden-slide"[^>]*data-veil-hidden', '<script type="application/json" id="veil-config">', '"name":\s*"w".*"name":\s*"s".*"name":\s*"b".*"name":\s*"alpha".*"name":\s*"mid".*"name":\s*"zeta"', 'Backup \\u003c/script> \\u003cb>', 'MKSUB\.</p>\s*</div>\s*</section>\s*<section[^>]*>\s*<p>After the break MKAFTERBREAK']
+        - ['id="lead-wrapper"', '<hr', '<div class="veil"[^>]*>\s*<section','<section id="sub-header"', '<h3[^>]*data-veil-group', 'Backup </script>', ' group="']
+---
+
+## Plain slide
+
+Plain text MKPLAIN.
+
+::: {.veil group="w"}
+
+Text before the first header MKBEFORE.
+
+## Wrapped one {#wrapped-one}
+
+Text MKWRAPONE.
+
+## Wrapped two {#wrapped-two}
+
+Text MKWRAPTWO.
+
+:::
+
+::: {#lead-wrapper .veil group="w"}
+
+## Lead header {#lead-header}
+
+Text MKLEAD.
+
+:::
+
+## Slide with a sub-header
+
+Text MKSLIDE.
+
+### Sub-header {#sub-header .veil group="s"}
+
+Sub text MKSUB.
+
+---
+
+After the break MKAFTERBREAK.
+
+## Hidden slide {#hidden-slide .veil group="b"}
+
+Hidden text MKHIDDEN.
+
+## Undeclared groups
+
+[Zeta MKZETA]{.veil group="zeta"} and [Alpha MKALPHA]{.veil group="alpha"}.

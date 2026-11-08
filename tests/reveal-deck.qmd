@@ -1,0 +1,118 @@
+---
+format:
+  revealjs:
+    slide-level: 2
+    slide-number: c/t
+filters:
+  - veil
+revealjs-plugins:
+  - veil
+extensions:
+  veil:
+    groups:
+      - name: main
+      - name: advanced
+        level: 1
+        shown: true
+      - name: expert
+        level: 5
+        shown: false
+      - name: extra
+      - name: backup
+        shown: false
+_quarto:
+  tests:
+    run:
+      extension-test:
+        description: The Reveal.js adapter detaches hidden slides, keeps the deck in sync, and sends the state to the speaker view and multiplex.
+        check: "node veil-check.mjs"
+    revealjs:
+      noErrors: true
+      ensureFileRegexMatches:
+        - ['<script type="application/json" id="veil-config">', '<section id="part-b"[^>]*data-veil-hidden']
+        - ['<section id="ghost"']
+---
+
+## One {#one .veil group="main"}
+
+Text MKONE.
+
+## Ghost {#ghost data-visibility="hidden"}
+
+Text MKGHOST.
+
+## Two {#two .veil group="advanced"}
+
+Text MKTWO.
+
+## Three {#three .veil group="main"}
+
+::: {.fragment}
+
+Fragment one MKFRAGONE.
+
+:::
+
+::: {.veil group="extra"}
+
+::: {.fragment}
+
+Fragment two MKFRAGTWO.
+
+:::
+
+::: {.fragment}
+
+Fragment three MKFRAGTHREE.
+
+:::
+
+:::
+
+::: {.notes}
+
+Speaker note MKNOTETHREE.
+
+:::
+
+## Expert {#expert .veil group="expert"}
+
+Text MKEXPERT.
+
+## Anim one {#anim-one .veil group="main" auto-animate="true"}
+
+Text MKANIMONE.
+
+## Anim two {#anim-two .veil group="main" auto-animate="true"}
+
+Text MKANIMTWO.
+
+## Uncounted {#uncounted .veil group="main" visibility="uncounted"}
+
+Text MKUNCOUNTED.
+
+# Part A {#part-a .veil group="main"}
+
+## A1 {#a1 .veil group="main"}
+
+Text MKAONE.
+
+## A2 {#a2 .veil group="expert"}
+
+Text MKATWO.
+
+# Part B {#part-b .veil group="backup"}
+
+## B1 {#b1 .veil group="main"}
+
+Text MKBONE.
+
+## B2 {#b2 .veil group="main"}
+
+Text MKBTWO.
+
+# Part C {#part-c .veil group="extra"}
+
+## C1 {#c1 .veil group="extra"}
+
+Text MKCONE.

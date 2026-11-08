@@ -1,0 +1,49 @@
+---
+title: "Reveal.js notes"
+subtitle: "How hidden slides work in a deck."
+description: "Learn how Veil removes hidden slides from the deck, and the limits with the chalkboard, auto-animate, and numeric hashes."
+---
+
+## Hidden slides leave the deck
+
+Veil moves each hidden section out of `.slides`.
+After each change it calls `Reveal.sync()`, so Reveal.js counts the slides again.
+The slide numbers, the progress bar, the overview, and the slide menu follow.
+
+- A hidden `#` stack leaves as a unit.
+  If all the slides of a stack are hidden, the stack is hidden too.
+- A shown slide comes back at its original place.
+- If the current slide becomes hidden, the deck goes to the next visible slide, else to the previous visible slide.
+- A fragment in hidden content does not count.
+
+## Speaker view, multiplex, and scroll view
+
+- All the windows of the speaker view must have the same state, because they synchronise by slide indices.
+  A change in the main window goes to the speaker view.
+- With multiplex, the master sends the state to each follower.
+- Scroll view stops and starts again around a change.
+
+## Limits
+
+### Chalkboard
+
+The chalkboard keeps drawings by slide indices.
+After a change, a drawing can show on a different slide.
+Choose the state before you draw.
+Veil writes a warning when the chalkboard is enabled and the document has veiled slides.
+
+### Auto-animate
+
+Auto-animate can run between slides that become neighbours.
+If this is not what you want, do not use auto-animate across slides that are in different groups.
+
+### Numeric hashes
+
+With `hash-type: number`, a hash such as `#/3` points to a slide index.
+The index changes with the state.
+Share the URL with the `veil` parameter to give the same deck to each reader.
+
+### Two tabs
+
+Two browser tabs of the same deck do not sync each other.
+Each speaker view follows the deck that opened it.

@@ -1,0 +1,57 @@
+---
+title: "Static formats"
+subtitle: "What Veil does when there is no browser runtime."
+description: "Learn how Veil removes hidden content at render time in PDF, Typst, Word, and other formats, and how it compares with conditional content."
+---
+
+## How it works
+
+Only `html` and `revealjs` have the runtime.
+In all other formats, `dashboard` included, Veil renders a static result from the resolved state.
+
+- Veil removes each veiled element that is not visible in the resolved state.
+- A removed header removes its section.
+- Veil removes the class `.veil` and the attribute `group` from the elements that it keeps.
+- Quarto then numbers sections, figures, and tables without gaps.
+- Footnotes and citations that occur only in removed content do not show.
+
+Set the state with the `state` option.
+You can set it for one format only.
+See [State and sharing](state.qmd#options-for-one-format).
+
+## Compare with conditional content
+
+In formats without the runtime, `.veil` is close to Quarto conditional content.
+
+| | `.veil` | `.content-visible` and `.content-hidden` |
+| --- | --- | --- |
+| Chosen by | Group names and the state. | The format, or a metadata value. |
+| Changes in the browser | Yes, in `html` and `revealjs`. | No. The choice is made at render time. |
+| Several levels | Yes, with the ladder. | No. |
+| Cross-reference to removed content | Veil writes a warning. | Quarto writes its own unresolved-reference warning. |
+| Section numbers | Hidden sections keep their numbers in HTML. No gaps in static formats. | No gaps. |
+
+: `.veil` compared with `.content-visible` and `.content-hidden`. {.striped .hover tbl-colwidths="[24,38,38]"}
+
+Use `.content-visible` to change content by output format.
+Use `.veil` to change content by audience.
+
+## Numbers in HTML
+
+In HTML, hidden sections keep their numbers and footnotes, because Quarto fixes HTML numbers at render time.
+In static formats, the numbers have no gaps.
+
+## Cross-references
+
+A cross-reference to content that a `.veil` element removed gets a warning from Veil.
+The element can be a section or a figure that carries `.veil`.
+The warning gives the reference and the group, for example "`@sec-deep` points to content that the group `advanced` removed".
+Quarto also writes its own unresolved-reference warning for the same reference.
+
+A figure or a callout nested inside removed content gets only the unresolved-reference warning from Quarto.
+Veil does not know about it, because the figure itself has no `.veil`.
+
+## Limits
+
+- Veil does not move the state to another page of a book or a website.
+- Quarto search indexes hidden content in HTML.

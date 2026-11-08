@@ -1,0 +1,89 @@
+---
+title: "State and sharing"
+subtitle: "Set, read, and share the state of the groups."
+description: "Learn the state grammar, the URL parameter, the state option, how to set options from the command line, and the limits."
+---
+
+## Grammar
+
+A state is a comma-separated list of tokens.
+
+| Token | Meaning |
+| --- | --- |
+| `level:S` | Sets the ladder setting to `S`. `S` is `0` or a declared level. |
+| `name` | Shows the independent group `name`. |
+| `-name` | Hides the independent group `name`. |
+
+: Tokens of the state grammar. {.striped .hover tbl-colwidths="[20,80]"}
+
+- `level:S` applies first, then the other tokens in their order.
+- If `S` is not a declared level, the setting becomes the highest declared level below `S`, or `0`.
+- A ladder group name in a `name` or `-name` token is ignored.
+- An unknown token is ignored.
+  The runtime writes a message in the browser console.
+  The filter writes a warning for the `state` option.
+
+Example: `level:1,-backup`.
+
+## Order of precedence
+
+From lowest to highest:
+
+1. The `shown` values in `groups`.
+2. The `state` option.
+3. The URL query parameter `veil`, for example `?veil=level:2,-backup`.
+
+The runtime and the formats without the runtime use the same order.
+Only the runtime reads the URL.
+
+## The URL
+
+Each change of state writes the full state to the query parameter `veil`, with `history.replaceState`.
+The browser history does not get a new entry, and the hash stays.
+
+The full state is `level:S` (if a ladder exists), then one token for each independent group.
+Thus a shared URL gives the same deck to each reader.
+
+Reveal.js print mode (`?print-pdf`) reads the parameter.
+Thus a PDF that you print from `?print-pdf&veil=level:1` contains only the visible content.
+
+## The state option
+
+Set the default state in the document.
+It replaces the `shown` values.
+
+```yaml
+extensions:
+  veil:
+    state: "level:1,-backup"
+```
+
+## Options for one format
+
+Quarto merges format metadata deeply, so you can set an option for one format.
+
+```yaml
+format:
+  typst:
+    extensions:
+      veil:
+        state: "level:2,backup"
+```
+
+## Options from the command line
+
+`-M` cannot set a nested key.
+To set an option from the command line, agents and scripts use `--metadata-file`.
+
+```bash
+quarto render talk.qmd --to typst --metadata-file intro.yml
+```
+
+Here, `intro.yml` holds the `extensions: veil:` block.
+
+## Limits
+
+- The state does not follow the reader to another page of a book or a website.
+- Quarto search indexes hidden content.
+- Two browser tabs of the same deck do not sync each other.
+  Each speaker view follows the deck that opened it.

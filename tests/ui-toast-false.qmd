@@ -1,0 +1,31 @@
+---
+title: Toast off
+format: html
+filters:
+  - veil
+extensions:
+  veil:
+    toast: false
+    groups:
+      - name: backup
+        shown: false
+        label: Backup
+_quarto:
+  tests:
+    run:
+      extension-test:
+        description: The option toast set to false shows no toast.
+        check: "node veil-check.mjs"
+    html:
+      noErrors: true
+---
+
+## Introduction
+
+Plain text MKOFFPLAIN.
+
+::: {.veil group="backup"}
+
+Backup text MKOFFBACKUP.
+
+:::

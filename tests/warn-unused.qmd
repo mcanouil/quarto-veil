@@ -1,0 +1,40 @@
+---
+title: Unused group
+format:
+  typst: default
+filters:
+  - veil
+extensions:
+  veil:
+    state: "-hidden"
+    groups:
+      - name: used
+      - name: hidden
+      - name: nested
+      - name: idle
+_quarto:
+  tests:
+    run:
+      extension-test:
+        warnings: exhaustive
+    typst:
+      noErrors: true
+      printsMessage:
+        - level: WARN
+          regex: "The group 'idle' is declared in the option groups but no element uses it"
+          count: 1
+---
+
+::: {.veil group="used"}
+
+Used content.
+
+:::
+
+## Removed section {.veil group="hidden"}
+
+::: {.veil group="nested"}
+
+Nested content inside a removed section.
+
+:::

@@ -1,0 +1,52 @@
+---
+format:
+  revealjs:
+    slide-level: 2
+filters:
+  - veil
+revealjs-plugins:
+  - veil
+extensions:
+  veil:
+    toast: speaker
+    groups:
+      - name: advanced
+        level: 1
+        shown: true
+        label: Advanced
+      - name: expert
+        level: 2
+        shown: false
+        label: Expert
+      - name: backup
+        shown: false
+        label: Backup
+_quarto:
+  tests:
+    run:
+      extension-test:
+        description: The interface in Reveal.js, with the toast option speaker.
+        check: "node veil-check.mjs"
+    revealjs:
+      noErrors: true
+---
+
+## One {#one}
+
+Text MKUIONE.
+
+## Two {#two .veil group="advanced"}
+
+Text MKUITWO.
+
+## Three {#three .veil group="expert"}
+
+Text MKUITHREE.
+
+## Four {#four .veil group="backup"}
+
+Text MKUIFOUR.
+
+## Five {#five}
+
+Text MKUIFIVE.

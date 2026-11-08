@@ -1,0 +1,17 @@
+---
+title: Minimal render
+format:
+  html: default
+  revealjs: default
+  typst: default
+filters:
+  - veil
+revealjs-plugins:
+  - veil
+---
+
+## Veiled content
+
+::: {.veil}
+This content is veiled.
+:::

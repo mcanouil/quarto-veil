@@ -1,0 +1,86 @@
+---
+title: "Groups and ladder"
+subtitle: "The model behind the groups."
+description: "Learn how groups work as switches, how levels form a ladder, and how the ladder setting decides what is shown."
+---
+
+## The model
+
+Four sentences describe how Veil works for the presenter.
+
+1. Groups are switches.
+2. Groups with a level form a ladder, and the ladder has one setting: every group at or below it is shown.
+3. The keys `[` and `]` move the setting.
+4. Hidden slides leave the deck, and the numbers follow.
+
+## Declare groups
+
+You can declare the groups in the document.
+The declared order is the order in the popover.
+
+```yaml
+extensions:
+  veil:
+    groups:
+      - name: advanced
+        level: 1
+        shown: true
+        label: Advanced
+      - name: expert
+        level: 2
+        shown: false
+      - name: backup
+        shown: false
+```
+
+A group with a `level` is on the ladder.
+A group without a `level` is independent.
+
+## Resolve groups
+
+Veil resolves the list of groups one time for each document.
+
+1. If you declare `groups`, Veil uses them in the declared order.
+2. If the document uses a group that you did not declare, Veil adds it as an independent group after the declared groups, in alphanumeric order, and writes a warning.
+3. If you do not declare `groups`, Veil uses the groups that the document uses, as independent groups, in alphanumeric order.
+4. The default group `veil` is part of the list only when the document uses it.
+
+## The ladder
+
+Let `L1 < L2 < ... < Lk` be the distinct levels of the ladder.
+The ladder setting is `0` or one of these levels.
+
+- At setting `S`, each group on the ladder with `level <= S` is shown.
+  Each other group on the ladder is hidden.
+- Groups with the same level are shown and hidden together.
+- `level-up` moves the setting to the next declared level.
+- `level-down` moves it to the previous declared level, or to `0`.
+- At the ends, the keys have no effect, and the toast shows the current setting.
+- A change of the setting has no effect on independent groups.
+
+The default setting is the highest level of a group with `shown: true`, or `0`.
+If a group below this level has `shown: false`, Veil writes a warning and shows the group.
+
+With no ladder, the runtime does not bind `[` and `]`, and the `?` help does not list them.
+
+## Independent groups
+
+An independent group is a plain switch.
+You turn it on or off with the popover or with the API.
+The ladder does not affect it.
+
+## Show and hide a ladder group
+
+The API calls `show(group)` and `hide(group)` on a ladder group change the setting.
+
+- `show(group)` raises the setting to the level of the group if it is lower.
+  Otherwise it has no effect.
+- `hide(group)` lowers the setting to the declared level below the level of the group, or to `0`, if it is higher.
+  Otherwise it has no effect.
+
+Thus `show` never hides a group, and `hide` never shows a group.
+
+## A state that hides everything
+
+Veil does not apply a state that leaves no slide in a Reveal.js deck.
+The runtime writes a message in the browser console and keeps the current state.

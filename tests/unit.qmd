@@ -1,0 +1,11 @@
+---
+title: Unit tests of the state module
+format: html
+_quarto:
+  tests:
+    run:
+      extension-test:
+        check: "quarto pandoc lua unit/state-test.lua && node unit/state-test.mjs"
+---
+
+The check runs the Lua and JavaScript state modules against `state-cases.json`.

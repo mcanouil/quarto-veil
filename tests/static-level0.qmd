@@ -1,0 +1,106 @@
+---
+title: Static removal with every group hidden
+format:
+  typst:
+    keep-typ: true
+  docx: default
+filters:
+  - veil
+extensions:
+  veil:
+    groups:
+      - name: veil
+      - name: advanced
+        level: 1
+        shown: true
+      - name: expert
+        level: 2
+        shown: false
+      - name: backup
+        shown: false
+    state: "level:0,-backup"
+_quarto:
+  tests:
+    typst:
+      ensureTypstFileRegexMatches:
+        - ["MKPLAINTEXT", "MKDEFAULTDIV"]
+        - ["MKADVANCED", "MKEXPERT", "MKBACKUP", "MKADVBACKUP", "veil", "group="]
+    docx:
+      ensureDocxRegexMatches:
+        - []
+        - ["MKADVANCED", "MKEXPERT", "MKBACKUP", "MKADVBACKUP", "veil"]
+---
+
+## Plain section
+
+Plain text MKPLAINTEXT with a span [MKADVANCEDSPAN]{.veil group="advanced"} and a span [MKEXPERTSPAN]{.veil group="expert"}.
+
+## Deep dive {#sec-deep .veil group="expert"}
+
+Section text MKEXPERTSECTION.
+
+### Below the deep dive
+
+Subsection text MKEXPERTSUBSECTION.
+
+## Advanced section {.veil group="advanced"}
+
+Section text MKADVANCEDSECTION.
+
+## Content
+
+::: {.veil group="expert"}
+
+Div text MKEXPERTDIV.
+
+:::
+
+::: {.veil}
+
+Div text MKDEFAULTDIV.
+
+:::
+
+::: {.callout-note .veil group="expert"}
+
+Callout text MKEXPERTCALLOUT.
+
+:::
+
+::: {#fig-expert .veil group="expert"}
+
+Figure body MKEXPERTFIGURE.
+
+Figure caption.
+
+:::
+
+| Column |
+| ------ |
+| MKBACKUPTABLE |
+
+: Table caption. {#tbl-backup .veil group="backup"}
+
+```{r}
+#| classes: veil
+#| group: expert
+cat("MKEXPERTCODE")
+```
+
+::: {.veil group="advanced backup"}
+
+Div text MKADVBACKUPDIV.
+
+:::
+
+::: {.veil group="advanced"}
+
+Outer text MKADVANCEDOUTER.
+
+::: {.veil group="expert"}
+
+Inner text MKEXPERTINNER.
+
+:::
+
+:::

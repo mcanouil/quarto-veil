@@ -1,0 +1,32 @@
+---
+title: Rule in a veiled Div
+format:
+  revealjs: default
+filters:
+  - veil
+revealjs-plugins:
+  - veil
+_quarto:
+  tests:
+    run:
+      extension-test:
+        warnings: exhaustive
+    revealjs:
+      noErrors: true
+      printsMessage:
+        - level: WARN
+          regex: "contains '---'"
+          count: 1
+---
+
+## Slide
+
+::: {.veil}
+
+First part.
+
+---
+
+Second part.
+
+:::

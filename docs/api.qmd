@@ -1,0 +1,66 @@
+---
+title: "JavaScript API"
+subtitle: "Control Veil from the page."
+description: "Show, hide, and toggle groups, set the level, apply a state, and listen for changes with the Veil object."
+---
+
+## The Veil object
+
+Veil adds `window.Veil` to every page that has veiled content.
+
+```js
+window.Veil = {
+  show(group),
+  hide(group),
+  toggle(group),
+  setLevel(level),
+  apply(state),
+  state()
+};
+```
+
+| Method | Effect |
+| --- | --- |
+| `show(group)` | Shows the group. On a ladder group, it raises the setting if needed. |
+| `hide(group)` | Hides the group. On a ladder group, it lowers the setting if needed. |
+| `toggle(group)` | Shows the group if it is hidden, else hides it. |
+| `setLevel(level)` | Sets the ladder setting. |
+| `apply(state)` | Applies a string in the [state grammar](state.qmd#grammar). |
+| `state()` | Returns the current state. |
+
+: Methods of `window.Veil`. {.striped .hover tbl-colwidths="[25,75]"}
+
+`state()` returns `{ level, groups, text }`.
+
+- `level` is the ladder setting, or `null` when there is no ladder.
+- `groups` is an object from independent group name to a boolean.
+- `text` is the full state in the state grammar.
+
+If the document has no veiled element, the calls do nothing.
+`state()` then returns `{ level: null, groups: {}, text: '' }`.
+
+## Events
+
+Each change sends a `veil:change` event on `document`.
+The `detail` of the event is the same object that `state()` returns.
+
+```js
+document.addEventListener('veil:change', function (event) {
+  console.log(event.detail.text);
+});
+```
+
+## Example
+
+```js
+Veil.setLevel(2);
+Veil.hide('backup');
+Veil.apply('level:1,-backup');
+```
+
+Each call that changes the state updates the URL, shows the toast, and sends the event.
+There are two exceptions.
+
+- Veil refuses a state that hides every slide of a Reveal.js deck.
+  Veil writes a message in the browser console, and the state does not change.
+- With `toast: false`, there is no toast.
