@@ -1,0 +1,41 @@
+---
+title: Static removal in a dashboard
+format: dashboard
+filters:
+  - veil
+extensions:
+  veil:
+    groups:
+      - name: advanced
+        level: 1
+        shown: true
+      - name: expert
+        level: 2
+        shown: false
+_quarto:
+  tests:
+    dashboard:
+      ensureFileRegexMatches:
+        - ["MKKEEPCARD", "MKADVANCEDSPAN", "MKADVANCEDDIV"]
+        - ["MKEXPERT", "veil", "data-group"]
+---
+
+## Row
+
+::: {.card}
+
+Card text MKKEEPCARD with [MKADVANCEDSPAN]{.veil group="advanced"} and [MKEXPERTSPAN]{.veil group="expert"}.
+
+::: {.veil group="advanced"}
+
+Div text MKADVANCEDDIV.
+
+:::
+
+::: {.veil group="expert"}
+
+Div text MKEXPERTDIV.
+
+:::
+
+:::

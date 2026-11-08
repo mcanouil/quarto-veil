@@ -1,0 +1,54 @@
+---
+title: HTML interface
+format: html
+filters:
+  - veil
+extensions:
+  veil:
+    groups:
+      - name: advanced
+        level: 1
+        shown: true
+        label: Advanced
+      - name: notes
+        level: 1
+        shown: true
+        label: Notes
+      - name: expert
+        level: 2
+        shown: false
+        label: Expert
+      - name: backup
+        shown: false
+        label: "<b>A</b> & 'x' Don't -- </script>"
+_quarto:
+  tests:
+    run:
+      extension-test:
+        description: The toast, the button, and the popover in HTML.
+        check: "node veil-check.mjs"
+---
+
+## Introduction
+
+Plain text MKUIPLAIN.
+
+```{=html}
+<button id="before" type="button">Before</button>
+```
+
+## Advanced section {.veil group="advanced"}
+
+Advanced text MKUIADVANCED.
+
+## Notes section {.veil group="notes"}
+
+Notes text MKUINOTES.
+
+## Expert section {.veil group="expert"}
+
+Expert text MKUIEXPERT.
+
+## Backup section {.veil group="backup"}
+
+Backup text MKUIBACKUP.

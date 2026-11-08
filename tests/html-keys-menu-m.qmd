@@ -1,0 +1,26 @@
+---
+title: Menu key m in HTML
+format:
+  html: default
+filters:
+  - veil
+extensions:
+  veil:
+    keys:
+      menu: "m"
+_quarto:
+  tests:
+    run:
+      extension-test:
+        warnings: exhaustive
+    html:
+      noErrors: true
+---
+
+## Section
+
+::: {.veil}
+
+Content.
+
+:::

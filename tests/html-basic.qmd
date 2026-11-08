@@ -1,0 +1,81 @@
+---
+title: HTML runtime
+format:
+  html:
+    toc: true
+filters:
+  - veil
+extensions:
+  veil:
+    groups:
+      - name: advanced
+        level: 1
+        shown: true
+        label: Advanced
+      - name: expert
+        level: 2
+        shown: false
+        label: Expert
+      - name: backup
+        shown: false
+        label: Backup
+      - name: veil
+_quarto:
+  tests:
+    run:
+      extension-test:
+        description: The runtime markup and the HTML runtime.
+        check: "node veil-check.mjs"
+    html:
+      ensureFileRegexMatches:
+        - ['<section id="sec-expert"[^>]*data-veil-group="expert"[^>]*data-veil-hidden', '<div id="div-both"[^>]*data-veil-group="advanced backup"[^>]*data-veil-hidden', '<div id="callout-note"[^>]*data-veil-group="expert"', '<div id="callout-note"[^>]*data-veil-hidden', '<div id="fig-veiled"[^>]*data-veil-group="expert"', '<div id="fig-veiled"[^>]*data-veil-hidden', '<div id="tbl-veiled"[^>]*data-veil-group="expert"', '<div id="tbl-veiled"[^>]*data-veil-hidden', '<div id="cell-veiled"[^>]*data-veil-group="expert"', '<div id="cell-veiled"[^>]*data-veil-hidden', '<script type="application/json" id="veil-config">', 'veil\.js']
+        - ['<section id="sec-advanced"[^>]*data-veil-hidden', ' group="']
+---
+
+## Introduction
+
+Plain text MKPLAIN.
+
+<input id="field" type="text" aria-label="A text field">
+
+## Advanced section {#sec-advanced .veil group="advanced"}
+
+Advanced text MKADVANCED.
+
+## Expert section {#sec-expert .veil group="expert"}
+
+Expert text MKEXPERT.
+
+## Content
+
+::: {#div-both .veil group="advanced backup"}
+
+Text in two groups MKBOTH.
+
+:::
+
+Some text [with an aside MKASIDE]{#span-default .veil}.
+
+::: {#callout-note .callout-note .veil group="expert"}
+
+## Note title
+
+Callout text MKCALLOUT.
+
+:::
+
+![A veiled figure MKFIGURE](data:image/gif;base64,R0lGODlhAQABAAAAACw=){#fig-veiled .veil group="expert"}
+
+| Column |
+|--------|
+| MKTABLE |
+
+: A veiled table {#tbl-veiled .veil group="expert"}
+
+::: {#cell-veiled .veil group="expert"}
+
+```{.python .cell-code}
+print("MKCELL")
+```
+
+:::

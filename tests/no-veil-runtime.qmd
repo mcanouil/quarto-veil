@@ -1,0 +1,28 @@
+---
+title: Runtime formats without a veiled element
+format:
+  html: default
+  revealjs: default
+filters:
+  - veil
+revealjs-plugins:
+  - veil
+_quarto:
+  tests:
+    run:
+      extension-test:
+        description: The filter adds nothing, and the plugin does not fail, when no element is veiled.
+        check: "node veil-check.mjs"
+    html:
+      ensureFileRegexMatches:
+        - []
+        - ['veil-config', 'veil\.js']
+    revealjs:
+      ensureFileRegexMatches:
+        - []
+        - ['veil-config']
+---
+
+## Slide
+
+Plain content.

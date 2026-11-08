@@ -1,0 +1,96 @@
+---
+title: Static removal of nested content
+format:
+  typst:
+    keep-typ: true
+  docx: default
+filters:
+  - veil
+extensions:
+  veil:
+    groups:
+      - name: advanced
+        level: 1
+        shown: true
+      - name: expert
+        level: 2
+        shown: false
+_quarto:
+  tests:
+    typst:
+      ensureTypstFileRegexMatches:
+        - ["MKKEEPINNERA", "MKKEEPINNERB", "MKKEEPSECTION", "MKKEEPSUB", "MKKEEPCALLOUT", "MKKEEPLAST"]
+        - ["MKEXPERT", "veil", "group="]
+    docx:
+      ensureDocxRegexMatches:
+        - []
+        - ["MKEXPERT", "veil"]
+---
+
+## Kept section
+
+Section text MKKEEPSECTION.
+
+### Gone subsection {.veil group="expert"}
+
+Subsection text MKEXPERTSUB.
+
+### Kept subsection
+
+Subsection text MKKEEPSUB.
+
+## Expert section {.veil group="expert"}
+
+::: {.veil group="advanced"}
+
+Div text MKEXPERTWRAPPEDADVANCED.
+
+:::
+
+### Advanced header below {.veil group="advanced"}
+
+Subsection text MKEXPERTWRAPPEDHEADER.
+
+## Second expert section {.veil group="expert"}
+
+Section text MKEXPERTADJACENT.
+
+## Headers inside a Div
+
+::: {.box}
+
+### Inner kept
+
+Text MKKEEPINNERA.
+
+### Inner gone {.veil group="expert"}
+
+Text MKEXPERTINNERSECTION.
+
+### Inner after
+
+Text MKKEEPINNERB.
+
+:::
+
+## Content inside other content
+
+::: {.veil group="expert"}
+
+Outer text with [a span MKEXPERTOUTERSPAN]{.veil group="advanced"}.
+
+:::
+
+::: {.callout-note}
+
+Callout text MKKEEPCALLOUT.
+
+::: {.veil group="expert"}
+
+Div text MKEXPERTINCALLOUT.
+
+:::
+
+:::
+
+Last text MKKEEPLAST.

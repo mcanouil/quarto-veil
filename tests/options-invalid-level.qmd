@@ -1,0 +1,19 @@
+---
+title: Invalid level
+format: html
+filters:
+  - veil
+extensions:
+  veil:
+    groups:
+      - name: advanced
+        level: 0
+_quarto:
+  tests:
+    html:
+      shouldError: true
+---
+
+## Veiled content {.veil group="advanced"}
+
+Content.

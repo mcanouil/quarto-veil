@@ -1,0 +1,129 @@
+---
+title: "Veil"
+subtitle: "Show or hide slides and content by group, so one deck serves many audiences."
+description: "Tag slides, blocks, and inline content with named groups, then show or hide the groups with a key during the talk."
+authors:
+  - name: "Mickaël Canouil"
+    orcid: "0000-0002-3396-4549"
+    url: "https://mickael.canouil.fr"
+page-layout: full
+title-block-style: none
+toc: false
+anchor-sections: false
+---
+
+::: {.atelier-landing}
+
+::: {.atelier-hero .gradient .glow}
+
+::: {.atelier-hero-text}
+
+[Quarto filter and Reveal.js plugin]{.atelier-eyebrow}
+
+# Veil
+
+[Show or hide slides and content by group, so one deck serves many audiences.]{.atelier-lead}
+
+::: {.atelier-actions}
+
+[Get started](#quick-start){.btn .btn-primary .btn-lg}
+[See the examples](examples.qmd){.btn .btn-outline-primary .btn-lg}
+
+:::
+
+::: {.panel-tabset}
+
+## Terminal
+
+```{.bash filename="Terminal"}
+quarto add {{< var extension.reference >}}
+```
+
+This will install the extension under the `_extensions` subdirectory.
+If you are using version control, you will want to check in this directory.
+
+## Quarto Wizard
+
+Install it from your editor with [Quarto Wizard](https://m.canouil.dev/quarto-wizard):
+
+::: {.btn-group role="group" aria-label="Quarto Wizard installer options"}
+
+[Visual Studio Code](vscode://mcanouil.quarto-wizard/install?repo={{< var extension.wizard-reference >}}){.btn .btn-outline-primary title="Install {{< var extension.reference >}} in Visual Studio Code using the Quarto Wizard extension."}
+[Positron](positron://mcanouil.quarto-wizard/install?repo={{< var extension.wizard-reference >}}){.btn .btn-outline-primary title="Install {{< var extension.reference >}} in Positron using the Quarto Wizard extension."}
+[VSCodium](vscodium://mcanouil.quarto-wizard/install?repo={{< var extension.wizard-reference >}}){.btn .btn-outline-primary title="Install {{< var extension.reference >}} in VSCodium using the Quarto Wizard extension."}
+
+:::
+
+:::
+
+:::
+
+::: {.atelier-hero-figure}
+
+[![The Quarto mark, a quartered circle, used as the site icon.](assets/icons/icon.svg){width="320" height="312"}]{}
+
+:::
+
+:::
+
+You have one deck, and several audiences.
+Some slides are for experts, and some slides are backups.
+Without Veil, you show a slide and then skip it, or you keep one deck for each audience.
+
+Veil lets you tag content with a group name.
+During the talk, a key press shows or hides a group.
+A hidden slide leaves the deck, so the slide numbers, the progress bar, and the overview stay correct.
+The same tags work in HTML documents.
+In other formats, Veil removes the hidden content when it renders.
+
+## Quick start
+
+Add the filter and the Reveal.js plugin to the front matter.
+Then add the class `.veil` to the content to hide.
+
+```markdown
+---
+format: revealjs
+filters:
+  - veil
+revealjs-plugins:
+  - veil
+extensions:
+  veil:
+    groups:
+      - name: expert
+        shown: false
+---
+
+## Introduction
+
+This slide is always shown.
+
+## Proof {.veil group="expert"}
+
+This slide is for experts.
+```
+
+Open the rendered deck and press `u`.
+The popover shows a switch for the group `expert`, which is off.
+Turn it on to bring the slide back.
+
+See the [Reference](reference.qmd) for every option, and the [Examples](examples.qmd) for each of them rendered.
+
+## Where it works
+
+Veil has a runtime for `html` and `revealjs`.
+There, the reader shows and hides groups in the browser.
+In all other formats, including `dashboard`, Veil removes the hidden content at render time.
+The [Static formats](static-formats.qmd) page explains the details.
+
+## Links
+
+- [Authoring](authoring.qmd) for the content you can tag.
+- [Groups and ladder](groups.qmd) for the model behind the groups.
+- [Reference](reference.qmd) for the full option list.
+- [Examples](examples.qmd) for rendered output.
+- [Changelog](changelog.qmd) for what each release changed.
+- [Source and issues](https://github.com/mcanouil/quarto-veil) on GitHub.
+
+:::

@@ -1,0 +1,38 @@
+---
+title: Inconsistent ladder
+format:
+  typst: default
+filters:
+  - veil
+extensions:
+  veil:
+    groups:
+      - name: advanced
+        level: 1
+        shown: false
+      - name: expert
+        level: 2
+_quarto:
+  tests:
+    run:
+      extension-test:
+        warnings: exhaustive
+    typst:
+      noErrors: true
+      printsMessage:
+        - level: WARN
+          regex: 'The group "advanced" is hidden but a group above it is shown'
+          count: 1
+---
+
+::: {.veil group="advanced"}
+
+Advanced.
+
+:::
+
+::: {.veil group="expert"}
+
+Expert.
+
+:::

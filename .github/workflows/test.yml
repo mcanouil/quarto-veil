@@ -1,0 +1,16 @@
+name: Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    uses: mcanouil/quarto-extension-test/.github/workflows/extension-test.yml@main
+    with:
+      node-version: "26"
+      playwright-browsers: "chromium"

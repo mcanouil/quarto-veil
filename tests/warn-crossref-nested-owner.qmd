@@ -1,0 +1,51 @@
+---
+title: Cross-reference after a nested removed header
+format:
+  typst: default
+from: markdown-auto_identifiers
+filters:
+  - veil
+extensions:
+  veil:
+    groups:
+      - name: x
+        shown: false
+      - name: "y"
+        shown: false
+_quarto:
+  tests:
+    run:
+      extension-test:
+        warnings: exhaustive
+    typst:
+      noErrors: true
+      printsMessage:
+        - level: WARN
+          regex: "`@sec-deep` points to content that the group `x` removed"
+          count: 1
+        - level: WARN
+          regex: "Unable to resolve crossref @sec-deep"
+          count: 1
+---
+
+# Overview
+
+See @sec-deep for details.
+
+# Part {.veil group="x"}
+
+## B {.veil group="y"}
+
+Text.
+
+## D
+
+### Deep dive {#sec-deep}
+
+Deep text.
+
+# Other
+
+## B {.veil group="y"}
+
+Text.

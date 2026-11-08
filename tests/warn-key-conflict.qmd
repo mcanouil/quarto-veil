@@ -1,0 +1,33 @@
+---
+title: Key conflict
+format:
+  revealjs: default
+filters:
+  - veil
+revealjs-plugins:
+  - veil
+extensions:
+  veil:
+    keys:
+      menu: "f"
+_quarto:
+  tests:
+    run:
+      extension-test:
+        warnings: exhaustive
+        check: "node veil-check.mjs"
+    revealjs:
+      noErrors: true
+      printsMessage:
+        - level: WARN
+          regex: "The key 'f' of keys.menu is the same as a key of Reveal.js or Quarto"
+          count: 1
+---
+
+## Slide
+
+::: {.veil}
+
+Content.
+
+:::

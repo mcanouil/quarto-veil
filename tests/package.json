@@ -1,0 +1,10 @@
+{
+  "name": "quarto-veil-tests",
+  "private": true,
+  "description": "Browser checks of the quarto-veil runtime.",
+  "license": "MIT",
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "playwright": "^1.65.0"
+  }
+}

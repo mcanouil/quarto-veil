@@ -1,0 +1,44 @@
+---
+title: Static removal of undeclared groups by the state
+format:
+  typst:
+    keep-typ: true
+  docx: default
+filters:
+  - veil
+extensions:
+  veil:
+    state: "-veil,-extra"
+_quarto:
+  tests:
+    typst:
+      ensureTypstFileRegexMatches:
+        - ["MKKEEPPLAIN", "MKKEEPOTHER"]
+        - ["MKGONEDEFAULT", "MKGONEEXTRA", "veil", "group="]
+    docx:
+      ensureDocxRegexMatches:
+        - []
+        - ["MKGONEDEFAULT", "MKGONEEXTRA", "veil"]
+---
+
+## Section
+
+Plain text MKKEEPPLAIN.
+
+::: {.veil}
+
+Div text MKGONEDEFAULT.
+
+:::
+
+::: {.veil group="extra"}
+
+Div text MKGONEEXTRA.
+
+:::
+
+::: {.veil group="other"}
+
+Div text MKKEEPOTHER.
+
+:::

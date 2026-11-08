@@ -1,0 +1,116 @@
+---
+title: "Reference"
+subtitle: "Every option the veil extension accepts."
+description: "Look up the filter entry, the content syntax, every option under extensions.veil, and what Veil validates."
+---
+
+## Enable
+
+```yaml
+filters:
+  - veil
+revealjs-plugins:
+  - veil
+```
+
+The filter runs at the stage `pre-quarto`, before Quarto numbers sections and resolves cross-references.
+The `revealjs-plugins` entry has no effect in other formats.
+
+## Content
+
+| Syntax | Effect |
+| --- | --- |
+| `.veil` | Marks an element as veiled. |
+| `group="a b"` | Joins the element to the groups `a` and `b`. Without it, the element joins the group `veil`. |
+
+: Attributes of a veiled element. {.striped .hover tbl-colwidths="[25,75]"}
+
+See [Authoring](authoring.qmd) for the elements that you can tag.
+
+## Configuration
+
+```yaml
+extensions:
+  veil:
+    groups:
+      - name: advanced
+        level: 1
+        shown: true
+        label: Advanced
+      - name: expert
+        level: 2
+        shown: false
+      - name: backup
+        shown: false
+    state: "level:1,-backup"
+    keys:
+      menu: "u"
+      level-up: "]"
+      level-down: "["
+    button:
+      enabled: auto
+      position: bottom-left
+    toast: auto
+```
+
+### Options
+
+| Option | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `groups` | list | No | discovered | Declared groups, in the order of the popover. |
+| `groups[].name` | string | Yes | | The group name, as used in `group="..."`. |
+| `groups[].level` | integer, `>= 1` | No | | The position on the ladder. Without it, the group is independent. |
+| `groups[].shown` | boolean | No | `true` | The default state of the group. |
+| `groups[].label` | string | No | the name | The text in the popover and the toast. See [Labels](#labels). |
+| `state` | string | No | | A state that replaces the `shown` values. See [State and sharing](state.qmd). |
+| `keys.menu` | string | No | `u` | Opens and closes the popover. |
+| `keys.level-up` | string | No | `]` | Moves the ladder setting one level up. |
+| `keys.level-down` | string | No | `[` | Moves the ladder setting one level down. |
+| `button.enabled` | `auto`, `true`, `false` | No | `auto` | `auto` shows the button in `html` and not in `revealjs`. |
+| `button.position` | `top-left`, `top-right`, `bottom-left`, `bottom-right` | No | `bottom-left` | The corner of the button. |
+| `toast` | `auto`, `main`, `speaker`, `false` | No | `auto` | Where the toast shows. |
+
+: Veil options. {.striped .hover tbl-colwidths="[18,18,9,12,43]"}
+
+### Labels
+
+The popover and the toast show a label as plain text.
+Quarto reads a label as Markdown, and Veil keeps this text as you wrote it:
+
+- HTML, for example `<b>A</b>` or `<T>`.
+- Quotes around a word, for example `'x'` or `"x"`.
+- An apostrophe in a word, for example in `Don't`.
+- Hyphens and dots, for example `--`, `---` or `...`.
+
+Veil removes Markdown marks such as `*` and backticks, and keeps the text in them.
+Typographic punctuation shows in its ASCII form, so `—` shows as `---` and `’` shows as `'`.
+
+## Validation
+
+- A group name must match `^[a-z][a-z0-9_-]*$`.
+  Any other name stops the render with an error.
+- Veil writes a warning, and does not stop the render, in these cases:
+  - A declared group is not used in the document.
+    Veil does not write this warning when the document has no veiled element, or when the document is a page of a project rendered to an HTML format.
+  - The document uses a group that you did not declare.
+  - A `keys` entry is the same as a Reveal.js key, a Quarto key, or another `keys` entry.
+    The runtime does not bind this key.
+  - The default states of the ladder are not consistent.
+  - The `state` option has an unknown token.
+  - The format is `revealjs`, the chalkboard is enabled, and the document has veiled slides.
+  - The format is `revealjs`, the document has veiled content, and no `revealjs-plugins` entry names `veil`.
+  - A `.veil` Div contains `---`.
+  - In a static format, a cross-reference points to removed content.
+
+## Limitations
+
+::: {.callout-caution}
+Veil does not support `.veil` on a tab header of a tabset, on a callout title, or on the title slide.
+See [Authoring](authoring.qmd#positions-that-veil-does-not-support) for the alternatives.
+:::
+
+- A block cannot span two slides.
+- The state does not follow the reader to another page of a book or a website.
+- Quarto search indexes hidden content.
+- Chalkboard drawings use slide indices, so they can move after a change.
+  See [Reveal.js notes](reveal-notes.qmd).

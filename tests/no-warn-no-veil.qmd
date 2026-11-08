@@ -1,0 +1,20 @@
+---
+title: No veiled element
+format:
+  typst: default
+filters:
+  - veil
+extensions:
+  veil:
+    groups:
+      - name: advanced
+_quarto:
+  tests:
+    run:
+      extension-test:
+        warnings: exhaustive
+    typst:
+      noErrors: true
+---
+
+Plain content.

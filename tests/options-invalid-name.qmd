@@ -1,0 +1,18 @@
+---
+title: Invalid group name
+format: html
+filters:
+  - veil
+extensions:
+  veil:
+    groups:
+      - name: Advanced
+_quarto:
+  tests:
+    html:
+      shouldError: true
+---
+
+## Veiled content {.veil group="Advanced"}
+
+Content.

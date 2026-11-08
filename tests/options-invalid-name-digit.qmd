@@ -1,0 +1,21 @@
+---
+title: Group name that starts with a digit
+format: html
+filters:
+  - veil
+extensions:
+  veil:
+    groups:
+      - name: 2fast
+_quarto:
+  tests:
+    html:
+      shouldError: true
+      printsMessage:
+        - level: ERROR
+          regex: "Rename the group, for example to 'g-2fast'\\."
+---
+
+## Veiled content {.veil group="2fast"}
+
+Content.

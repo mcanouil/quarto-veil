@@ -1,0 +1,34 @@
+---
+title: Button option
+format: revealjs
+revealjs-plugins:
+  - veil
+filters:
+  - veil
+extensions:
+  veil:
+    button:
+      enabled: true
+    groups:
+      - name: backup
+        shown: false
+        label: Backup
+_quarto:
+  tests:
+    run:
+      extension-test:
+        description: The option button.enabled true adds the button.
+        check: "node veil-check.mjs"
+    revealjs:
+      noErrors: true
+---
+
+## Introduction
+
+Plain text MKBTNPLAIN.
+
+::: {.veil group="backup"}
+
+Backup text MKBTNBACKUP.
+
+:::

@@ -1,0 +1,32 @@
+---
+title: Undeclared group
+format:
+  typst: default
+filters:
+  - veil
+extensions:
+  veil:
+    groups:
+      - name: advanced
+_quarto:
+  tests:
+    run:
+      extension-test:
+        warnings: exhaustive
+    typst:
+      noErrors: true
+      printsMessage:
+        - level: WARN
+          regex: "The group 'extra' is used in the document but not declared"
+          count: 1
+---
+
+## Section {.veil group="advanced"}
+
+Advanced.
+
+::: {.veil group="extra"}
+
+Extra content.
+
+:::

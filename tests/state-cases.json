@@ -1,0 +1,120 @@
+[
+  {
+    "name": "ladder with an independent group",
+    "groups": [
+      {"name": "advanced", "level": 1, "shown": true, "label": "Advanced"},
+      {"name": "expert", "level": 2, "shown": false, "label": "Expert"},
+      {"name": "backup", "shown": false, "label": "Backup"}
+    ],
+    "initial": {"text": "level:1,-backup", "warnings": 0},
+    "apply": [
+      {"input": "level:2", "text": "level:2,-backup", "unknown": []},
+      {"input": "level:3", "text": "level:2,-backup", "unknown": []},
+      {"input": "level:0", "text": "level:0,-backup", "unknown": []},
+      {"input": "expert", "text": "level:1,-backup", "unknown": []},
+      {"input": "-advanced", "text": "level:1,-backup", "unknown": []},
+      {"input": "nope,-x", "text": "level:1,-backup", "unknown": ["nope", "-x"]},
+      {"input": "level:abc", "text": "level:1,-backup", "unknown": ["level:abc"]},
+      {"input": "-backup,backup", "text": "level:1,backup", "unknown": []},
+      {"input": "backup,-backup", "text": "level:1,-backup", "unknown": []},
+      {"input": "backup,level:2", "text": "level:2,backup", "unknown": []},
+      {"input": "level:1,level:2", "text": "level:2,-backup", "unknown": []},
+      {"input": " backup , ,level:2 ", "text": "level:2,backup", "unknown": []},
+      {"input": "", "text": "level:1,-backup", "unknown": []}
+    ],
+    "previous": [{"level": 3, "expected": 2}, {"level": 2, "expected": 1}, {"level": 1, "expected": 0}, {"level": 0, "expected": 0}],
+    "visible": [
+      {"names": ["advanced"], "expected": true},
+      {"names": ["expert"], "expected": false},
+      {"names": ["advanced", "backup"], "expected": false},
+      {"names": ["advanced", "expert"], "expected": false},
+      {"names": ["unknown-group"], "expected": true},
+      {"names": ["advanced", "unknown-group"], "expected": true},
+      {"names": [], "expected": true}
+    ],
+    "step": [
+      {"from": "level:1", "direction": 1, "text": "level:2,-backup"},
+      {"from": "level:2", "direction": 1, "text": "level:2,-backup"},
+      {"from": "level:2", "direction": -1, "text": "level:1,-backup"},
+      {"from": "level:1", "direction": -1, "text": "level:0,-backup"},
+      {"from": "level:0", "direction": -1, "text": "level:0,-backup"},
+      {"from": "level:0", "direction": 1, "text": "level:1,-backup"}
+    ]
+  },
+  {
+    "name": "ladder with sparse levels",
+    "groups": [
+      {"name": "basic", "level": 1, "shown": true, "label": "Basic"},
+      {"name": "expert", "level": 5, "shown": false, "label": "Expert"}
+    ],
+    "initial": {"text": "level:1", "warnings": 0},
+    "apply": [
+      {"input": "level:3", "text": "level:1", "unknown": []},
+      {"input": "level:5", "text": "level:5", "unknown": []}
+    ],
+    "previous": [{"level": 6, "expected": 5}, {"level": 5, "expected": 1}, {"level": 3, "expected": 1}, {"level": 1, "expected": 0}],
+    "visible": [
+      {"names": ["expert"], "expected": false}
+    ],
+    "step": [
+      {"from": "level:1", "direction": 1, "text": "level:5"},
+      {"from": "level:5", "direction": -1, "text": "level:1"},
+      {"from": "level:1", "direction": -1, "text": "level:0"}
+    ]
+  },
+  {
+    "name": "inconsistent shown values",
+    "groups": [
+      {"name": "advanced", "level": 1, "shown": false, "label": "Advanced"},
+      {"name": "expert", "level": 2, "shown": true, "label": "Expert"}
+    ],
+    "initial": {"text": "level:2", "warnings": 1},
+    "apply": [],
+    "visible": [
+      {"names": ["advanced"], "expected": true},
+      {"names": ["expert"], "expected": true}
+    ],
+    "step": []
+  },
+  {
+    "name": "no ladder",
+    "groups": [
+      {"name": "notes", "shown": true, "label": "Notes"},
+      {"name": "backup", "shown": false, "label": "Backup"}
+    ],
+    "initial": {"text": "-backup,notes", "warnings": 0},
+    "apply": [],
+    "visible": [],
+    "step": []
+  },
+  {
+    "name": "groups on the same level",
+    "groups": [
+      {"name": "advanced", "level": 1, "shown": true, "label": "Advanced"},
+      {"name": "notes", "level": 1, "shown": true, "label": "Notes"}
+    ],
+    "initial": {"text": "level:1", "warnings": 0},
+    "apply": [
+      {"input": "level:0", "text": "level:0", "unknown": []}
+    ],
+    "visible": [
+      {"names": ["advanced", "notes"], "expected": true}
+    ],
+    "step": [
+      {"from": "level:1", "direction": -1, "text": "level:0"}
+    ]
+  },
+  {
+    "name": "empty groups",
+    "groups": [],
+    "initial": {"text": "", "warnings": 0},
+    "apply": [
+      {"input": "level:2", "text": "", "unknown": []},
+      {"input": "x", "text": "", "unknown": ["x"]}
+    ],
+    "visible": [
+      {"names": ["veil"], "expected": true}
+    ],
+    "step": []
+  }
+]
