@@ -67,42 +67,11 @@ local function as_string(value)
   return pandoc.utils.stringify(value)
 end
 
---- The marks that `Quoted` elements had in the source.
-local QUOTE_MARKS = { SingleQuote = "'", DoubleQuote = '"' }
-
---- Read a label as the text that the author wrote. Quarto reads metadata
---- strings as Markdown, so raw HTML becomes `RawInline` and quotes become
---- `Quoted`. `stringify` drops the first and writes typographic marks for the
---- second, so the walk puts the source text back before `stringify`.
---- @param value any A string, a boolean, or a Pandoc inline list
---- @return string|nil text The label, nil when the value is absent
-local function as_literal_text(value)
-  local kind = pandoc.utils.type(value)
-  if kind ~= 'Inlines' and kind ~= 'Blocks' then
-    return as_string(value)
-  end
-  local literal = value:walk({
-    RawInline = function(raw)
-      return pandoc.Str(raw.text)
-    end,
-    Quoted = function(quoted)
-      local mark = QUOTE_MARKS[quoted.quotetype]
-      local inlines = pandoc.Inlines({ pandoc.Str(mark) })
-      inlines:extend(quoted.content)
-      inlines:insert(pandoc.Str(mark))
-      return inlines
-    end,
-  })
-  return pandoc.utils.stringify(literal)
-end
-
 --- Read one declared group and check it.
 --- @param raw table The group as the schema check resolved it
 --- @param position integer The position of the group in the list
---- @param source table|nil The group as the metadata holds it, before the
---- schema check turned its values into strings
 --- @return table group {name, level, shown, label}
-local function read_group(raw, position, source)
+local function read_group(raw, position)
   local name = as_string(raw.name)
   if name == nil or name == '' then
     fail(string.format(
@@ -132,7 +101,7 @@ local function read_group(raw, position, source)
     name = name,
     level = level,
     shown = shown == true or as_string(shown) == 'true',
-    label = as_literal_text(source and source.label) or as_string(raw.label) or name,
+    label = as_string(raw.label) or name,
   }
 end
 
@@ -144,10 +113,8 @@ local function read_options(meta)
 
   local groups = {}
   local declared = checker:option('groups') or {}
-  local extension = meta.extensions and meta.extensions[EXTENSION_NAME]
-  local sources = extension and extension.groups or {}
   for position, raw in ipairs(declared) do
-    groups[#groups + 1] = read_group(raw, position, sources[position])
+    groups[#groups + 1] = read_group(raw, position)
   end
 
   local keys = checker:option('keys') or {}
