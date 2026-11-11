@@ -3,14 +3,14 @@ sources:
   quarto-lua-modules:
     origin: "https://github.com/mcanouil/quarto-lua-modules"
     fetch: "{origin}/releases/download/{version}/{file}"
-    version: "2.9.0"
+    version: "2.10.0"
     licence: MIT
     files:
       content-extraction.lua:
         sha256: "94b128f579bc01c70fdb00441331c41984fd16da5e2f51c0282d79dd41c9875d"
         runtime: any
       html.lua:
-        sha256: "ffc9987cdc12ee32d7fae7714ab29087129a6dd124de39acaff5b40a56727a08"
+        sha256: "7ca4f4af8f9ee2062452bef59d536a5582f1b4c5387fcaf2e1a1d3231ff89f6f"
         runtime: any
       logging.lua:
         sha256: "5d99ceb89c813fbe4491310e42b4a4cff62e11dda42f01b4f61f969aa58e0706"
