@@ -39,7 +39,7 @@
     return element;
   }
 
-  function text(key) {
+  function textOf(key) {
     var strings = ui.config.strings || {};
     return typeof strings[key] === 'string' ? strings[key] : key;
   }
@@ -145,8 +145,8 @@
     }
     var section = make('div', 'veil-section');
     var heading = make('div', 'veil-heading');
-    heading.textContent = text('veil-level');
-    var group = make('div', 'veil-ladder', { role: 'group', 'aria-label': text('veil-level') });
+    heading.textContent = textOf('veil-level');
+    var group = make('div', 'veil-ladder', { role: 'group', 'aria-label': textOf('veil-level') });
     var levels = [0].concat(state.levels.slice().sort(function (a, b) {
       return a - b;
     }));
@@ -174,7 +174,7 @@
     }
     var section = make('div', 'veil-section');
     var heading = make('div', 'veil-heading');
-    heading.textContent = text('veil-groups');
+    heading.textContent = textOf('veil-groups');
     section.appendChild(heading);
     names.forEach(function (name) {
       var control = make('button', 'veil-switch', { type: 'button', role: 'switch', 'aria-checked': 'false' });
@@ -274,7 +274,7 @@
     var popover = make('div', 'veil-popover veil-' + position + (withButton ? ' veil-with-button' : ''), {
       id: 'veil-popover',
       role: 'dialog',
-      'aria-label': text('veil-name')
+      'aria-label': textOf('veil-name')
     });
     popover.hidden = true;
     [buildLadder(), buildSwitches()].forEach(function (section) {
@@ -291,8 +291,8 @@
   function buildButton(position) {
     var button = make('button', 'veil-button veil-' + position, {
       type: 'button',
-      title: text('veil-name'),
-      'aria-label': text('veil-name'),
+      title: textOf('veil-name'),
+      'aria-label': textOf('veil-name'),
       'aria-haspopup': 'dialog',
       'aria-expanded': 'false',
       'aria-controls': 'veil-popover'
@@ -327,7 +327,7 @@
       key.textContent = menuKey;
       link.appendChild(key);
     }
-    link.appendChild(document.createTextNode(' ' + text('veil-name') + '…'));
+    link.appendChild(document.createTextNode(' ' + textOf('veil-name') + '…'));
     link.addEventListener('click', function (event) {
       event.preventDefault();
       var menu = window.Reveal.getPlugin && window.Reveal.getPlugin('menu');
@@ -365,7 +365,7 @@
       return;
     }
     if (typeof deck.registerKeyboardShortcut === 'function' && ui.config.keys.menu) {
-      deck.registerKeyboardShortcut(ui.config.keys.menu, text('veil-open-popover'));
+      deck.registerKeyboardShortcut(ui.config.keys.menu, textOf('veil-open-popover'));
     }
     watchMenu();
   }

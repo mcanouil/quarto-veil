@@ -1,0 +1,38 @@
+---
+title: Interface language in Reveal.js
+lang: fr-FR
+format:
+  revealjs:
+    slide-level: 2
+filters:
+  - veil
+revealjs-plugins:
+  - veil
+extensions:
+  veil:
+    groups:
+      - name: advanced
+        level: 1
+        label: Avancé
+      - name: backup
+        shown: false
+        label: Sauvegarde
+_quarto:
+  tests:
+    run:
+      extension-test:
+        description: The interface text follows the document language in Reveal.js.
+        check: "node veil-check.mjs"
+---
+
+## Introduction
+
+Plain text MKLANGREVPLAIN.
+
+## Advanced section {.veil group="advanced"}
+
+Advanced text MKLANGREVADVANCED.
+
+## Backup section {.veil group="backup"}
+
+Backup text MKLANGREVBACKUP.
