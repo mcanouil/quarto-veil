@@ -85,6 +85,31 @@ Quarto reads a label as Markdown, and Veil keeps this text as you wrote it:
 Veil removes Markdown marks such as `*` and backticks, and keeps the text in them.
 Typographic punctuation shows in its ASCII form, so `—` shows as `---` and `’` shows as `'`.
 
+### Interface language
+
+The interface text follows the document language.
+Veil has English and French text.
+Set `lang` to pick one, and English is used for any other language.
+To change a text or to add a language, set these Quarto `language` keys, for example in a `_language-xx.yml` file or in the document:
+
+| Key | English text |
+| --- | --- |
+| `veil-name` | `Veil` |
+| `veil-level` | `Level` |
+| `veil-groups` | `Groups` |
+| `veil-none` | `none` |
+| `veil-shown` | `shown` |
+| `veil-hidden` | `hidden` |
+| `veil-open-popover` | `Open the Veil popover` |
+| `veil-level-up` | `Show the next level of content` |
+| `veil-level-down` | `Hide the current level of content` |
+
+: Veil language keys. {.striped .hover}
+
+The key `veil-name` names the button, the popover and the entry in the Reveal.js menu.
+The key `veil-open-popover` and the two level keys describe the keys in the `?` help of Reveal.js.
+Group labels are not translated, so set `groups[].label` for each language.
+
 ## Validation
 
 - A group name must match `^[a-z][a-z0-9_-]*$`.
