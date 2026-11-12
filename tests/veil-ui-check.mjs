@@ -157,6 +157,46 @@ async function htmlUi(t, ctx) {
   t.equal(errors.length, 0, 'the interface gives no page error', errors);
 }
 
+async function htmlLanguage(t, ctx) {
+  ctx.only('html');
+  const { page, errors } = await ctx.open('');
+  const names = await page.evaluate(() => ({
+    button: document.querySelector('.veil-button').getAttribute('title'),
+    popover: document.querySelector('.veil-popover').getAttribute('aria-label'),
+    headings: Array.from(document.querySelectorAll('.veil-heading')).map((el) => el.textContent),
+    ladder: document.querySelector('.veil-ladder').getAttribute('aria-label'),
+  }));
+  t.equal(names.button, 'Veil', 'the button title comes from the language keys');
+  t.equal(names.popover, 'Veil', 'the popover label comes from the language keys');
+  t.equal(names.ladder, 'Niveau', 'the built-in French text names the ladder');
+  t.equal(
+    JSON.stringify(names.headings),
+    JSON.stringify(['Niveau', 'Interrupteurs']),
+    'the built-in French text is used, and a language key of the document replaces it',
+  );
+  await page.evaluate(() => window.Veil.setLevel(1));
+  t.ok(await waitForToast(page, 'Niveau 1 · Avancé'), 'the ladder toast is in French');
+  await page.evaluate(() => window.Veil.show('backup'));
+  t.ok(await waitForToast(page, 'Sauvegarde · affiché'), 'the group toast is in French');
+  t.equal(errors.length, 0, 'the page gives no page error', errors);
+}
+
+async function revealLanguage(t, ctx) {
+  ctx.only('revealjs');
+  const { page, errors } = await ctx.open('');
+  await page.evaluate(() => window.Veil.setLevel(1));
+  t.ok(await waitForToast(page, 'Niveau 1 · Avancé'), 'a region subtag such as fr-FR selects the French text');
+  await page.keyboard.press('Shift+Slash');
+  const help = await page.locator('.reveal .overlay-help, .reveal-overlay, .reveal .overlay').first().textContent({ timeout: 3000 }).catch(() => '');
+  t.ok(
+    help.includes('Ouvrir le panneau Veil') && help.includes('Afficher le niveau de contenu suivant') && help.includes('Masquer le niveau de contenu actuel'),
+    'the ? help lists the veil keys in French',
+    help.slice(0, 600),
+  );
+  await page.keyboard.press('Escape');
+  t.equal(errors.length, 0, 'the page gives no page error', errors);
+}
+
 async function toastFalse(t, ctx) {
   ctx.only('html');
   const { page, errors } = await ctx.open('');
@@ -331,6 +371,8 @@ async function menuKeyDropped(t, ctx) {
 export function uiTests() {
   return {
     'ui-html.qmd': htmlUi,
+    'ui-language.qmd': htmlLanguage,
+    'ui-language-reveal.qmd': revealLanguage,
     'ui-button-off.qmd': buttonOff,
     'ui-button-on.qmd': buttonOn,
     'ui-toast-false.qmd': toastFalse,
