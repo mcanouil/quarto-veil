@@ -1,0 +1,35 @@
+---
+title: Absolute table of contents links
+format:
+  html:
+    toc: true
+    include-after-body:
+      text: |
+        <script>
+        document.querySelectorAll('#TOC a[href^="#"]').forEach(function (link) {
+          link.href = link.href;
+        });
+        </script>
+filters:
+  - veil
+extensions:
+  veil:
+    groups:
+      - name: expert
+        shown: false
+        label: Expert
+_quarto:
+  tests:
+    run:
+      extension-test:
+        description: The table of contents entry of a hidden section hides when Quarto makes its link absolute.
+        check: "node veil-check.mjs"
+---
+
+## Introduction
+
+Plain text.
+
+## Expert section {#sec-expert .veil group="expert"}
+
+Expert text.
