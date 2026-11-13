@@ -561,8 +561,24 @@ async function multiplex(t, ctx) {
   t.equal(errors.length, 0, 'the multiplex events give no page error', errors);
 }
 
+async function htmlTocAbsolute(t, ctx) {
+  ctx.only('html');
+
+  const { page, errors } = await ctx.open('');
+  const link = page.locator('#TOC a[data-scroll-target="#sec-expert"]');
+  t.ok(
+    (await link.getAttribute('href')).startsWith('http'),
+    'the table of contents link has an absolute URL',
+  );
+  t.ok(!(await link.isVisible()), 'the table of contents entry of a hidden section is not visible');
+  await page.evaluate(() => window.Veil.show('expert'));
+  t.ok(await link.isVisible(), 'the table of contents entry shows when its section shows');
+  t.equal(errors.length, 0, 'the page gives no error', errors);
+}
+
 export const tests = {
   'html-basic.qmd': htmlBasic,
+  'html-toc-absolute.qmd': htmlTocAbsolute,
   'reveal-structure.qmd': revealStructure,
   'no-veil-runtime.qmd': noVeilRuntime,
   'reveal-deck.qmd': revealDeck,

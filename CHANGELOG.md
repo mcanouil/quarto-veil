@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix: Hide the table of contents entry of a hidden section on a Quarto website, where Quarto makes the table of contents links absolute.
+
 ## 0.2.0 (2026-11-12)
 
 - feat: Translate the interface text with the Quarto `language` keys, with built-in English and French text.
