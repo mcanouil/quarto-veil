@@ -7,5 +7,5 @@ authors:
 repository-code: "https://github.com/mcanouil/quarto-veil"
 url: "https://mcanouil.github.io/quarto-veil/"
 license: "MIT License"
-date-released: "2026-11-12"
-version: 0.2.0
+date-released: "2026-11-13"
+version: 0.2.1

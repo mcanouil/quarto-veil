@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.2.1 (2026-11-13)
+
 - fix: Hide the table of contents entry of a hidden section on a Quarto website, where Quarto makes the table of contents links absolute.
 
 ## 0.2.0 (2026-11-12)
