@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.3.0 (2026-11-15)
+
 - feat: Add the `--veil-border`, `--veil-shadow`, `--veil-toast-bg` and `--veil-active-bg` custom properties, so a theme can set every colour of the interface. Each one falls back to the colour it replaces.
 
 ## 0.2.1 (2026-11-13)
