@@ -255,6 +255,11 @@ async function quartoControls(t, ctx) {
   t.ok(!(await isShown(page, '.veil-button')), 'the button hides while the narrow sidebar is open');
   await page.evaluate(() => document.getElementById('quarto-sidebar-glass').classList.remove('show'));
   t.ok(await isShown(page, '.veil-button'), 'the button shows again after the narrow sidebar closes');
+
+  await page.keyboard.press('u');
+  t.ok(await waitPopover(page, true), 'the key u opens the popover');
+  await page.evaluate(() => document.getElementById('quarto-sidebar-glass').classList.add('show'));
+  t.ok(!(await isShown(page, POPOVER)), 'an open popover hides when the narrow sidebar opens from the keyboard');
   t.equal(errors.length, 0, 'the page gives no page error', errors);
 }
 

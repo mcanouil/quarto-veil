@@ -3,7 +3,7 @@
 ## Unreleased
 
 - fix: Hide the Quarto back-to-top link while the popover is open at the bottom of the screen, so the link no longer peeks out from under the popover.
-- fix: Hide the button while the narrow sidebar of a Quarto website is open, so the button no longer floats over the sidebar.
+- fix: Hide the button and the popover while the narrow sidebar of a Quarto website is open, so neither floats over the sidebar.
 
 ## 0.3.0 (2026-11-15)
 
