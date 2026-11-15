@@ -201,7 +201,7 @@ html.veil-ready [data-veil-menu][hidden] {
    button and the popover. The open popover hides the back-to-top link, and the
    open sidebar hides the button and the popover. */
 body:has(.veil-popover:is(.veil-bottom-left, .veil-bottom-right):not([hidden])) #quarto-back-to-top,
-body:has(#quarto-sidebar-glass.show) :is(.veil-button, .veil-popover) {
+body:has(#quarto-sidebar-glass:is(.show, .collapsing)) :is(.veil-button, .veil-popover) {
   visibility: hidden;
 }
 
