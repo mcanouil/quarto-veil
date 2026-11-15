@@ -221,6 +221,43 @@ async function buttonOn(t, ctx) {
   t.equal(errors.length, 0, 'the document gives no page error', errors);
 }
 
+function isShown(page, selector) {
+  return page.evaluate((s) => getComputedStyle(document.querySelector(s)).visibility === 'visible', selector);
+}
+
+// The page has no Quarto website navigation, so the check adds the two
+// controls with the identifiers and the classes that Quarto gives them.
+async function quartoControls(t, ctx) {
+  ctx.only('html');
+  const { page, errors } = await ctx.open('');
+  await page.setViewportSize({ width: 360, height: 740 });
+  await page.evaluate(() => {
+    const top = document.createElement('a');
+    top.id = 'quarto-back-to-top';
+    top.textContent = 'Back to top';
+    top.style.cssText = 'position: fixed; bottom: 50px; left: 50%; transform: translate(-50%, 0); z-index: 1000; display: inline-block;';
+    const glass = document.createElement('div');
+    glass.id = 'quarto-sidebar-glass';
+    glass.className = 'quarto-sidebar-collapse-item collapse';
+    document.body.append(top, glass);
+  });
+
+  t.ok(await isShown(page, '#quarto-back-to-top'), 'the back-to-top link shows while the popover is closed');
+  await page.click('.veil-button');
+  t.ok(await waitPopover(page, true), 'a click on the button opens the popover');
+  t.ok(!(await isShown(page, '#quarto-back-to-top')), 'the back-to-top link hides while the popover is open');
+  await page.keyboard.press('Escape');
+  t.ok(await waitPopover(page, false), 'Escape closes the popover');
+  t.ok(await isShown(page, '#quarto-back-to-top'), 'the back-to-top link shows again after the popover closes');
+
+  t.ok(await isShown(page, '.veil-button'), 'the button shows while the narrow sidebar is closed');
+  await page.evaluate(() => document.getElementById('quarto-sidebar-glass').classList.add('show'));
+  t.ok(!(await isShown(page, '.veil-button')), 'the button hides while the narrow sidebar is open');
+  await page.evaluate(() => document.getElementById('quarto-sidebar-glass').classList.remove('show'));
+  t.ok(await isShown(page, '.veil-button'), 'the button shows again after the narrow sidebar closes');
+  t.equal(errors.length, 0, 'the page gives no page error', errors);
+}
+
 async function speakerToasts(t, ctx, expected) {
   const { page } = await ctx.open('', { rewrite: LITERAL_REWRITE });
   await page.evaluate(() => window.Veil.toggle('backup'));
@@ -379,6 +416,7 @@ export function uiTests() {
     'ui-reveal.qmd': revealUi,
     'ui-toast-speaker.qmd': toastSpeaker,
     'ui-toast-main.qmd': toastMain,
+    'ui-quarto-controls.qmd': quartoControls,
     'warn-key-conflict.qmd': menuKeyDropped,
   };
 }

@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- fix: Hide the Quarto back-to-top link while the popover is open at the bottom of the screen, so the link no longer peeks out from under the popover.
+- fix: Hide the button while the narrow sidebar of a Quarto website is open, so the button no longer floats over the sidebar.
+
 ## 0.3.0 (2026-11-15)
 
 - feat: Add the `--veil-border`, `--veil-shadow`, `--veil-toast-bg` and `--veil-active-bg` custom properties, so a theme can set every colour of the interface. Each one falls back to the colour it replaces.

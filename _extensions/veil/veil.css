@@ -196,6 +196,14 @@ html.veil-ready [data-veil-menu][hidden] {
   visibility: visible;
 }
 
+/* Quarto websites. The back-to-top link sits at the bottom of the screen, under
+   a popover at the bottom. The narrow sidebar opens over the page, under the
+   button. The open popover and the open sidebar hide the control below them. */
+body:has(.veil-popover:is(.veil-bottom-left, .veil-bottom-right):not([hidden])) #quarto-back-to-top,
+body:has(#quarto-sidebar-glass.show) .veil-button {
+  visibility: hidden;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .veil-toast {
     transition: none;
