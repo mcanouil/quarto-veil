@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat: Add the `--veil-border`, `--veil-shadow`, `--veil-toast-bg` and `--veil-active-bg` custom properties, so a theme can set every colour of the interface. Each one falls back to the colour it replaces.
+
 ## 0.2.1 (2026-11-13)
 
 - fix: Hide the table of contents entry of a hidden section on a Quarto website, where Quarto makes the table of contents links absolute.

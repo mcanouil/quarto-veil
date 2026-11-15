@@ -91,9 +91,17 @@ In HTML, `auto` and `speaker` are the same as `main`.
 
 Set these CSS custom properties to change the colours and the corner radius.
 
-- `--veil-bg`
-- `--veil-fg`
-- `--veil-accent`
-- `--veil-radius`
+- `--veil-bg`: the background of the button and the popover.
+- `--veil-fg`: the text and the icons.
+- `--veil-accent`: the focus outline and the selected level.
+- `--veil-radius`: the corners of the popover.
+- `--veil-border`: the border of the button and the popover.
+- `--veil-shadow`: the shadow colour of the button and the popover.
+- `--veil-toast-bg`: the background of the toast.
+- `--veil-active-bg`: the background of the selected level.
 
 The default values come from the Bootstrap variables in HTML and from the Reveal.js theme variables in Reveal.js.
+The default border is `--veil-fg` at 35%.
+The default toast background is `--veil-fg` at 92%.
+The default background of the selected level mixes 20% of `--veil-accent` with `--veil-bg`.
+The default shadow is black at 20% on the button and at 25% on the popover.
