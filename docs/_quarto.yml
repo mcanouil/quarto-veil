@@ -111,6 +111,8 @@ extensions:
   # scalar here, without a second copy of the string.
   atelier:
     site-url: *site-url
+    # `version` comes from _atelier-version.yml, which _scripts/pre-render.sh
+    # writes from the extension manifest; see `metadata-files` below.
     # `website.favicon` covers `rel="icon"` alone. These three have no
     # configuration key of their own, so the social-metadata filter emits them.
     # Each path is written relative to the site root; the filter leaves it
@@ -146,6 +148,12 @@ extensions:
     # Blocks here are configuration to copy rather than files to save, so a
     # filename derived from the language would only add noise.
     auto-filename: false
+
+# Written by _scripts/pre-render.sh and removed by _scripts/post-render.sh.
+# Quarto re-reads the configuration after pre-render, and a missing file is
+# skipped, so a render that does not run pre-render still works.
+metadata-files:
+  - _atelier-version.yml
 
 brand: _brand.yml
 
