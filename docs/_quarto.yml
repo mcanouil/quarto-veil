@@ -148,25 +148,20 @@ extensions:
     # filename derived from the language would only add noise.
     auto-filename: false
 
-brand: _extensions/mcanouil/pastel/brand.yml
+brand: _brand.yml
 
 format:
   # Configure the extension format by name. Declaring `html` would replace
   # `atelier-html` rather than configure it, silently dropping the theme, the
   # bundled scripts, and the social-metadata filter.
   atelier-html:
-    # The pastel extension supplies both the brand above and the stylesheet
-    # here, which is why it is wired in twice. It is the shared identity of the
-    # Quarto extension documentation sites, so every one of them looks like the
-    # same family; a project that is not a Quarto extension does not use it.
-    #
-    # assets/theme.scss stays last, so a repository can still override an accent.
+    # _brand.yml selects the atelier terminal preset. The light and dark lists
+    # mirror atelier's own, so neither bundle loses the brand. assets/theme.scss
+    # stays last, so a repository can still override an accent.
     theme:
       light:
         - brand
-        - _extensions/mcanouil/pastel/pastel.scss
         - assets/theme.scss
       dark:
         - brand
-        - _extensions/mcanouil/pastel/pastel.scss
         - assets/theme.scss

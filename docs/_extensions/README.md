@@ -4,17 +4,22 @@ The extensions here fall into two groups, told apart by where they sit.
 
 ## Committed, under `mcanouil/`
 
-`mcanouil/atelier` and `mcanouil/pastel` are dependencies of the website itself: the project type and theme, and the shared palette.
-They arrive with the scaffold, which carries its own copies, and are checked in like any other Quarto extension.
-Beyond that they are managed for you: [Quarto Wizard](https://m.canouil.dev/quarto-wizard) installs them, and the Quarto Extensions Updates workflow keeps them current by scanning this directory.
+`mcanouil/atelier` is a dependency of the website itself: the project type and the theme.
+The site uses its `terminal` preset, which `../_brand.yml` selects.
+It arrives with the scaffold, which carries its own copy, and it is checked in like any other Quarto extension.
+Beyond that it is managed for you: [Quarto Wizard](https://m.canouil.dev/quarto-wizard) installs it, and the Quarto Extensions Updates workflow keeps it current by scanning this directory.
 
-Atelier includes the iconify, gitlink, code-window, toc-depth, and collapse-output extensions, under `mcanouil/atelier/_extensions/`.
+Atelier includes the code-window, collapse-output, div-reuse, gitlink, highlight-text, iconify, mobile-toc, offset-headings, preview-colour, prism, remember, toc-depth, and veil extensions, under `mcanouil/atelier/_extensions/`.
 Do not add a separate copy of one of these extensions here, because both copies then run.
 
+Veil is the exception.
+The site must show the checked-out source, so `local/veil` stays, and veil runs twice on each page that names it in `filters`.
+This stays until atelier can turn off a bundled copy.
+
 > [!IMPORTANT]
-> Do not add or update them by hand with the Quarto CLI.
+> Do not add or update it by hand with the Quarto CLI.
 >
-> `quarto add` and `quarto update` rewrite the manifest and drop the `source` and `source-type` fields, which are the only record of where each extension came from and at which version. An extension without them is invisible to the updater, and stays at whatever version it was left on.
+> `quarto add` and `quarto update` rewrite the manifest and drop the `source` and `source-type` fields, which are the only record of where an extension came from and at which version. An extension without them is invisible to the updater, and stays at whatever version it was left on.
 >
 > `quarto add` also fails here outright: `../_quarto.yml` declares `project: type: atelier`, and it builds a project context before installing anything, so it reports `Unsupported project type atelier` whenever atelier is missing or is the extension being replaced.
 

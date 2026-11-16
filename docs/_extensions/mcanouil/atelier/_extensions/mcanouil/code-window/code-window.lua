@@ -18,6 +18,7 @@ local meta_mod = require(quarto.utils.resolve_path('_vendor/quarto-lua-modules/m
 local pdoc = require(quarto.utils.resolve_path('_vendor/quarto-lua-modules/pandoc-helpers.lua'):gsub('%.lua$', ''))
 local html_mod = require(quarto.utils.resolve_path('_vendor/quarto-lua-modules/html.lua'):gsub('%.lua$', ''))
 local cell_output = require(quarto.utils.resolve_path('_modules/cell-output.lua'):gsub('%.lua$', ''))
+local language = require(quarto.utils.resolve_path('_modules/language.lua'):gsub('%.lua$', ''))
 local code_annotations = nil
 local checker = nil
 
@@ -76,7 +77,6 @@ local VALID_COLLAPSE = {
 local HOTFIX_DEFAULTS = {
   ['code-annotations'] = true,
   ['skylighting'] = true,
-  ['typst-title'] = true,
 }
 
 local CURRENT_FORMAT = nil
@@ -113,6 +113,14 @@ local function is_unnamed_cell_output(block)
   return cell_output.is_marked(block) and str.is_empty(block.attributes['filename'])
 end
 
+--- Check whether a block holds a chapter's front matter, which Quarto writes
+--- in a book rendered to one file and later replaces with the title block.
+--- @param block pandoc.CodeBlock Code block element
+--- @return boolean
+local function is_quarto_block(block)
+  return block.classes:includes('quarto-title-block')
+end
+
 -- ============================================================================
 -- BLOCK-LEVEL STYLE OVERRIDE
 -- ============================================================================
@@ -147,7 +155,7 @@ end
 --- @param block pandoc.CodeBlock Code block element
 --- @return string|nil auto_label Label written by the language module, if any
 local function take_block_attributes(block)
-  local auto_label = block.attributes['code-window-auto-label']
+  local auto_label = language.auto_label(block)
   local owned = {}
   for key, _ in pairs(block.attributes) do
     if key:sub(1, #ATTRIBUTE_PREFIX) == ATTRIBUTE_PREFIX and not cell_output.is_marker(key) then
@@ -324,10 +332,28 @@ end
 -- TYPST FUNCTION DEFINITION
 -- ============================================================================
 
---- Typst colour helpers for adaptive theme support.
+--- Typst colour helpers for adaptive theme support, and the theme state.
 --- Always injected so the code-window function can derive border, surface,
 --- muted, and label colours from the page background at render time.
+--- A template sets state("code-window-theme") to replace any derived value;
+--- the state is keyed by name, so the template needs none of these helpers.
 local TYPST_COLOUR_HELPERS = [==[
+// code-window: theme tokens that a template sets before the body
+#let _cw-theme = state("code-window-theme", (:))
+// the colour keys (border, surface, label, muted) derive from the page fill
+#let _cw-theme-defaults = (
+  radius: 8pt,
+  stroke-thickness: 1pt,
+  stroke-dash: none,
+  title-inset: (x: 1em, y: 0.6em),
+  body-inset: 8pt,
+  traffic-light-size: 0.85em,
+  traffic-light-gap: 0.425em,
+  traffic-light-colours: (rgb("#ff5f56"), rgb("#ffbd2e"), rgb("#27c93f")),
+)
+// the inset of a code block: the theme's body-inset inside a window
+#let _cw-body-inset = state("cw-body-inset", _cw-theme-defaults.body-inset)
+
 // code-window: adaptive colour helpers (derive UI tones from page background)
 #let _cw-page-bg() = {
   let f = page.fill
@@ -421,8 +447,9 @@ local TYPST_CONTENT_PLAIN = [==[
 
 --- Build the complete Typst code-window function definition.
 --- @param has_hotfixes boolean Whether at least one hot-fix is active
+--- @param has_own_wrapper boolean Whether the document defines the wrapper itself
 --- @return string Typst function definition(s)
-local function build_typst_function_def(has_hotfixes)
+local function build_typst_function_def(has_hotfixes, has_own_wrapper)
   local content_block = has_hotfixes
       and TYPST_CONTENT_WITH_ANNOTATIONS
       or TYPST_CONTENT_PLAIN
@@ -441,10 +468,28 @@ local function build_typst_function_def(has_hotfixes)
   context {
   let page-bg = _cw-page-bg()
   let fg = _cw-fg(page-bg)
-  let border-colour = color.mix((fg, 15%%), (page-bg, 85%%))
-  let surface-fill = color.mix((fg, 5%%), (page-bg, 95%%))
-  let muted-colour = color.mix((fg, 50%%), (page-bg, 50%%))
-  let label-colour = color.mix((fg, 65%%), (page-bg, 35%%))
+  let defaults = _cw-theme-defaults + (
+    border: color.mix((fg, 15%%), (page-bg, 85%%)),
+    surface: color.mix((fg, 5%%), (page-bg, 95%%)),
+    label: color.mix((fg, 65%%), (page-bg, 35%%)),
+    muted: color.mix((fg, 50%%), (page-bg, 50%%)),
+  )
+  let theme = _cw-theme.get()
+  for key in theme.keys() {
+    if key not in defaults {
+      panic("code-window: unknown key \"" + key + "\" in state(\"code-window-theme\"). "
+        + "Known keys: " + defaults.keys().join(", ") + ".")
+    }
+  }
+  let theme = defaults + theme
+  let border-colour = theme.border
+  let muted-colour = theme.muted
+  let label-colour = theme.label
+  let window-stroke = (
+    paint: border-colour,
+    thickness: theme.stroke-thickness,
+    dash: theme.stroke-dash,
+  )
 
   let filename-label = if filename != none {
     text(
@@ -470,10 +515,8 @@ local function build_typst_function_def(has_hotfixes)
     inset: (right: 0.5em),
     stack(
       dir: ltr,
-      spacing: 0.425em,
-      circle(radius: 0.425em, fill: rgb("#ff5f56"), stroke: none),
-      circle(radius: 0.425em, fill: rgb("#ffbd2e"), stroke: none),
-      circle(radius: 0.425em, fill: rgb("#27c93f"), stroke: none),
+      spacing: theme.traffic-light-gap,
+      ..theme.traffic-light-colours.map(c => circle(radius: theme.traffic-light-size / 2, fill: c, stroke: none)),
     ),
   )
 
@@ -528,17 +571,18 @@ local function build_typst_function_def(has_hotfixes)
 
   block(
     width: 100%%,
-    stroke: 1pt + border-colour,
-    radius: 8pt,
+    stroke: window-stroke,
+    radius: theme.radius,
     clip: true,
     {
       block(
         width: 100%%,
-        fill: surface-fill,
-        inset: (x: 1em, y: 0.6em),
+        fill: theme.surface,
+        inset: theme.title-inset,
         below: 0pt,
         radius: 0pt,
-        stroke: (bottom: 1pt + border-colour),
+        stroke: (bottom: window-stroke),
+        sticky: true,
         title-bar,
       )
       // Strip code block chrome so content fills flush against the window body.
@@ -547,7 +591,7 @@ local function build_typst_function_def(has_hotfixes)
       {
         set block(
           width: 100%%,
-          inset: 8pt,
+          inset: theme.body-inset,
           radius: 0pt,
           stroke: none,
           above: 0pt,
@@ -561,7 +605,9 @@ local function build_typst_function_def(has_hotfixes)
           above: 0pt,
           below: 0pt,
         )
-%s      }
+        _cw-body-inset.update(theme.body-inset)
+%s        _cw-body-inset.update(_cw-theme-defaults.body-inset)
+      }
     },
   )
   }
@@ -569,8 +615,13 @@ local function build_typst_function_def(has_hotfixes)
 ]==], content_block)
 
   local result = TYPST_COLOUR_HELPERS
-  if has_hotfixes then
+  -- A document's own wrapper calls the annotation helper to show annotations,
+  -- so the helper is written for it whatever the hot-fixes say.
+  if has_hotfixes or has_own_wrapper then
     result = result .. TYPST_ANNOTATION_DEF
+  end
+  if has_own_wrapper then
+    return result
   end
   return result .. fn_def
 end
@@ -706,7 +757,7 @@ local function process_html(block, resolved, auto_label)
     return block
   end
 
-  if not CONFIG.auto_filename or overrides.no_auto_filename then
+  if overrides.no_auto_filename or not (auto_label or CONFIG.auto_filename) then
     return block
   end
 
@@ -919,18 +970,8 @@ function Meta(meta)
     lines_label = opts['lines-label'] == 'true',
     hotfix_code_annotations = hotfix['code-annotations'],
     hotfix_skylighting = hotfix['skylighting'],
-    hotfix_typst_title = hotfix['typst-title'],
     code_annotations = annotations_enabled,
   }
-
-  -- Store hotfix state in metadata so the post-quarto typst-title-fix filter
-  -- can read it (it runs as a separate filter and has no access to CONFIG).
-  if not meta['_code-window-hotfix'] then
-    meta['_code-window-hotfix'] = pandoc.MetaMap({})
-  end
-  meta['_code-window-hotfix']['typst-title'] = pandoc.MetaString(
-    CONFIG.enabled and hotfix['typst-title'] and 'true' or 'false'
-  )
 
   -- Cache syntax highlighting background colour for Typst contrast-aware annotations.
   if CURRENT_FORMAT == 'typst' then
@@ -946,12 +987,10 @@ function Meta(meta)
   if CURRENT_FORMAT == 'html' and CONFIG.enabled then
     html_mod.ensure_html_dependency({
       name = EXTENSION_NAME,
-      version = '0.1.0',
       stylesheets = { 'style.css' },
     })
     html_mod.ensure_html_dependency({
       name = EXTENSION_NAME .. '-style-init',
-      version = '0.1.0',
       head = '<script>' .. make_style_js(CONFIG.style, CONFIG.collapse) .. '</script>',
     })
   end
@@ -981,6 +1020,10 @@ end
 --- that rather than skipping validation for the same kind of block, so the
 --- same document reports the same finding in both formats.
 function CodeBlock(block)
+  if is_quarto_block(block) then
+    return nil
+  end
+
   -- The Typst path reads the marker in the Pandoc filter, which runs first, so
   -- this pass is where it is removed for every format.
   local is_plain_output = is_unnamed_cell_output(block)
@@ -1046,10 +1089,12 @@ local function resolve_window_params(block, resolved, auto_label)
   local is_auto = false
 
   if (not filename or filename == '') and not overrides.no_auto_filename then
-    if CONFIG.auto_filename and block.classes and #block.classes > 0 then
-      -- Default/unknown/no-language blocks carry their label on
-      -- code-window-auto-label; everything else uses its language class.
-      filename = auto_label or block.classes[1]
+    -- A label asks for a window whatever auto-filename says.
+    if auto_label then
+      filename = auto_label
+      is_auto = true
+    elseif CONFIG.auto_filename and block.classes and #block.classes > 0 then
+      filename = block.classes[1]
       is_auto = true
     end
   end
@@ -1065,6 +1110,10 @@ end
 --- @return boolean consumed_next Whether the next block was consumed
 --- @return integer|nil annotation_block_id Block ID if annotations were found (for parent propagation)
 local function process_typst_block(block, next_block)
+  if is_quarto_block(block) then
+    return { block }, false, nil
+  end
+
   -- Check this block's own attributes against the CodeBlock group of the
   -- schema before anything below reads or rewrites them, in either branch.
   local resolved, auto_label = resolve_and_take(block)
@@ -1343,17 +1392,22 @@ function Pandoc(doc)
   -- Process code blocks and annotations throughout the document tree.
   doc.blocks = process_typst_blocks(doc.blocks)
 
-  -- Guard: check if the function definition is already present.
-  local fn_pattern = '#let ' .. CONFIG.typst_wrapper
+  -- A document that defines the wrapper itself keeps its definition, and
+  -- still gets the helpers that the hot-fixes call. The wrapper is either a
+  -- function, "#let name(", or a closure, "#let name =". A longer name such as
+  -- "#let name-circled-number(" is a helper, not the wrapper.
+  local fn_pattern = '#let ' .. CONFIG.typst_wrapper:gsub('%p', '%%%0') .. '%s*[(=]'
+  local has_own_wrapper = false
   for _, blk in ipairs(doc.blocks) do
     if blk.t == 'RawBlock' and blk.format == 'typst'
-        and blk.text:find(fn_pattern, 1, true) then
-      return doc
+        and blk.text:find(fn_pattern) then
+      has_own_wrapper = true
+      break
     end
   end
 
   local has_hotfixes = CONFIG.hotfix_code_annotations or CONFIG.hotfix_skylighting
-  local fn_def = build_typst_function_def(has_hotfixes)
+  local fn_def = build_typst_function_def(has_hotfixes, has_own_wrapper)
   if CONFIG.typst_wrapper ~= 'code-window' then
     fn_def = fn_def:gsub('code%-window%-annote%-colour', CONFIG.typst_wrapper .. '-annote-colour')
     fn_def = fn_def:gsub('code%-window%-circled%-number', CONFIG.typst_wrapper .. '-circled-number')
@@ -1392,4 +1446,5 @@ return {
   CodeBlock = CodeBlock,
   CONFIG = function() return CONFIG end,
   draws_chrome = draws_chrome,
+  is_quarto_block = is_quarto_block,
 }
