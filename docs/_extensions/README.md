@@ -19,7 +19,8 @@ This stays until atelier can turn off a bundled copy.
 > [!IMPORTANT]
 > Do not add or update it by hand with the Quarto CLI.
 >
-> `quarto add` and `quarto update` rewrite the manifest and drop the `source` and `source-type` fields, which are the only record of where an extension came from and at which version. An extension without them is invisible to the updater, and stays at whatever version it was left on.
+> `quarto add` and `quarto update` rewrite the manifest and drop the `source` and `source-type` fields, which are the only record of where an extension came from and at which version.
+> An extension without them is invisible to the updater, and stays at whatever version it was left on.
 >
 > `quarto add` also fails here outright: `../_quarto.yml` declares `project: type: atelier`, and it builds a project context before installing anything, so it reports `Unsupported project type atelier` whenever atelier is missing or is the extension being replaced.
 
