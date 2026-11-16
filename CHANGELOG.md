@@ -4,6 +4,7 @@
 
 - fix: Hide the Quarto back-to-top link while the popover is open at the bottom of the screen, so the link no longer peeks out from under the popover. (#10)
 - fix: Hide the button and the popover while the narrow sidebar of a Quarto website is open, so neither floats over the sidebar. (#10)
+- feat: Send a `veil:ready` event on `document` once the runtime has applied the start state, with the same detail as `Veil.state()`. (#11)
 
 ## 0.3.0 (2026-11-15)
 

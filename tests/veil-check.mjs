@@ -36,6 +36,14 @@ async function isHidden(page, selector) {
   return page.locator(selector).first().evaluate((el) => el.hidden);
 }
 
+// Records the veil events of a page from before its own scripts run.
+function recordEvents() {
+  window.veilEvents = [];
+  for (const name of ['veil:ready', 'veil:change']) {
+    document.addEventListener(name, (event) => window.veilEvents.push({ name, text: event.detail.text }));
+  }
+}
+
 async function htmlBasic(t, ctx) {
   ctx.only('html');
 
@@ -95,10 +103,15 @@ async function htmlBasic(t, ctx) {
   ({ page, errors } = await ctx.open('?veil=level:2&veil=level:0'));
   t.equal(await page.evaluate(() => window.Veil.state().level), 2, 'the first veil parameter wins when the URL has two');
 
-  ({ page, errors } = await ctx.open('?veil=level:2,backup'));
+  ({ page, errors } = await ctx.open('?veil=level:2,backup', { init: recordEvents }));
   t.equal(await page.evaluate(() => window.Veil.state().text), 'level:2,backup,veil', 'the URL sets the state at load');
   t.ok(await page.locator('#div-both').isVisible(), 'the URL state shows the element at load');
   t.equal(await page.evaluate(() => location.search), '?veil=level:2,backup', 'the load does not write the URL');
+  t.equal(
+    JSON.stringify(await page.evaluate(() => window.veilEvents)),
+    JSON.stringify([{ name: 'veil:ready', text: 'level:2,backup,veil' }]),
+    'the start sends one veil:ready event with the state of the URL, and no veil:change event',
+  );
 
   ({ page, errors } = await ctx.open(''));
   await page.keyboard.press(']');
@@ -186,7 +199,12 @@ function goTo(page, id, fragment) {
 async function revealDeck(t, ctx) {
   ctx.only('revealjs');
 
-  let { page, errors } = await ctx.open('');
+  let { page, errors } = await ctx.open('', { init: recordEvents });
+  t.equal(
+    JSON.stringify(await page.evaluate(() => window.veilEvents.map((event) => event.name))),
+    JSON.stringify(['veil:ready']),
+    'the start of a deck sends one veil:ready event, and no veil:change event',
+  );
   const warnings = [];
   page.on('console', (message) => {
     if (message.type() === 'warning') {
@@ -658,8 +676,9 @@ function context(format, base) {
     // of that context. Without it, each page has its own context.
     // `rewrite` is a pair [from, to]: the context replaces the first text in
     // each HTML response, for example to put a label with markup in the
-    // configuration.
-    async open(query, { ready = true, context = null, rewrite = null } = {}) {
+    // configuration. `init` is a function that runs in the page before its
+    // own scripts.
+    async open(query, { ready = true, context = null, rewrite = null, init = null } = {}) {
       browser = browser || (await launch());
       const owner = context || (await browser.newContext());
       if (rewrite) {
@@ -669,6 +688,9 @@ function context(format, base) {
         });
       }
       const page = await owner.newPage();
+      if (init) {
+        await page.addInitScript(init);
+      }
       const errors = [];
       page.on('pageerror', (error) => errors.push(error.message));
       await page.goto(base + query, { waitUntil: 'load' });
