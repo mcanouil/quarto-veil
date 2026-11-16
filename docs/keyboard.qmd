@@ -57,6 +57,8 @@ It opens the popover.
 - `button.enabled: auto` shows the button in `html` and not in `revealjs`.
 - `button.position` sets the corner: `top-left`, `top-right`, `bottom-left`, or `bottom-right`.
   The default, `bottom-left`, does not cover the Quarto back-to-top button.
+- On a Quarto website, an open popover in a bottom corner hides the back-to-top button until the popover closes.
+- On a Quarto website, the button and the popover are hidden while the narrow sidebar is open.
 - In Reveal.js, the button is outside `.slides`, so it does not scale with the slides.
 - The button and the popover are hidden in Reveal.js print mode and in `@media print`.
 

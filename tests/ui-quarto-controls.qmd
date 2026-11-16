@@ -1,0 +1,30 @@
+---
+title: Quarto website controls
+format: html
+filters:
+  - veil
+extensions:
+  veil:
+    groups:
+      - name: backup
+        shown: false
+        label: Backup
+_quarto:
+  tests:
+    run:
+      extension-test:
+        description: The button and the popover leave room for the back-to-top link and the narrow sidebar of a Quarto website.
+        check: "node veil-check.mjs"
+    html:
+      noErrors: true
+---
+
+## Introduction
+
+Plain text MKCTRLPLAIN.
+
+::: {.veil group="backup"}
+
+Backup text MKCTRLBACKUP.
+
+:::
