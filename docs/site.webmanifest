@@ -14,8 +14,8 @@
       "type": "image/png"
     }
   ],
-  "theme_color": "#191C1F",
-  "background_color": "#191C1F",
+  "theme_color": "#101216",
+  "background_color": "#101216",
   "display": "standalone",
   "start_url": "/quarto-veil/"
 }
