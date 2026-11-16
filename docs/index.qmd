@@ -60,7 +60,7 @@ Install it from your editor with [Quarto Wizard](https://m.canouil.dev/quarto-wi
 
 ::: {.atelier-hero-figure}
 
-[![The Quarto mark, a quartered circle, used as the site icon.](assets/icons/icon.svg){width="320" height="312"}]{}
+[![Social card for quarto-veil: the name in monospace over the tagline "Tag content in groups and show or hide each one per audience.", beside a code window titled document.qmd whose front matter declares a hidden expert group above a div shown only to experts.](assets/social/og-image.png){width="600" height="315"}]{}
 
 :::
 

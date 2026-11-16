@@ -39,14 +39,13 @@ website:
   # `<site-url>/assets/social/og-image.png` and measures to fill the image width
   # and height tags. An absolute URL would emit neither: Quarto returns no size
   # for one, then writes that over whatever the configuration set.
-  # _scripts/pre-render.sh writes the file, from GitHub's own preview for this
-  # repository; see assets/social/README.md.
+  # The card is committed; see assets/social/README.md.
   open-graph:
     image: assets/social/og-image.png
-    image-alt: "GitHub's repository card for mcanouil/quarto-veil: the repository name and its one-line description beside the owner's avatar, over the contributor, issue, star, and fork counts."
+    image-alt: "Social card for quarto-veil: the name in monospace over the tagline 'Tag content in groups and show or hide each one per audience.', beside a code window titled document.qmd whose front matter declares a hidden expert group above a div shown only to experts."
   twitter-card:
     image: assets/social/og-image.png
-    image-alt: "GitHub's repository card for mcanouil/quarto-veil: the repository name and its one-line description beside the owner's avatar, over the contributor, issue, star, and fork counts."
+    image-alt: "Social card for quarto-veil: the name in monospace over the tagline 'Tag content in groups and show or hide each one per audience.', beside a code window titled document.qmd whose front matter declares a hidden expert group above a div shown only to experts."
   page-navigation: true
   # atelier defaults search to an overlay button in the navbar. With no navbar
   # the search belongs in the sidebar, as a field rather than a button.
