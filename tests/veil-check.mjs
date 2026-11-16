@@ -36,6 +36,14 @@ async function isHidden(page, selector) {
   return page.locator(selector).first().evaluate((el) => el.hidden);
 }
 
+// Records the veil events of a page from before its own scripts run.
+function recordEvents() {
+  window.veilEvents = [];
+  for (const name of ['veil:ready', 'veil:change']) {
+    document.addEventListener(name, (event) => window.veilEvents.push({ name, text: event.detail.text }));
+  }
+}
+
 async function htmlBasic(t, ctx) {
   ctx.only('html');
 
@@ -95,18 +103,10 @@ async function htmlBasic(t, ctx) {
   ({ page, errors } = await ctx.open('?veil=level:2&veil=level:0'));
   t.equal(await page.evaluate(() => window.Veil.state().level), 2, 'the first veil parameter wins when the URL has two');
 
-  ({ page, errors } = await ctx.open('?veil=level:2,backup'));
+  ({ page, errors } = await ctx.open('?veil=level:2,backup', { init: recordEvents }));
   t.equal(await page.evaluate(() => window.Veil.state().text), 'level:2,backup,veil', 'the URL sets the state at load');
   t.ok(await page.locator('#div-both').isVisible(), 'the URL state shows the element at load');
   t.equal(await page.evaluate(() => location.search), '?veil=level:2,backup', 'the load does not write the URL');
-
-  const recordEvents = () => {
-    window.veilEvents = [];
-    for (const name of ['veil:ready', 'veil:change']) {
-      document.addEventListener(name, (event) => window.veilEvents.push({ name, text: event.detail.text }));
-    }
-  };
-  ({ page, errors } = await ctx.open('?veil=level:2,backup', { init: recordEvents }));
   t.equal(
     JSON.stringify(await page.evaluate(() => window.veilEvents)),
     JSON.stringify([{ name: 'veil:ready', text: 'level:2,backup,veil' }]),
@@ -199,7 +199,12 @@ function goTo(page, id, fragment) {
 async function revealDeck(t, ctx) {
   ctx.only('revealjs');
 
-  let { page, errors } = await ctx.open('');
+  let { page, errors } = await ctx.open('', { init: recordEvents });
+  t.equal(
+    JSON.stringify(await page.evaluate(() => window.veilEvents.map((event) => event.name))),
+    JSON.stringify(['veil:ready']),
+    'the start of a deck sends one veil:ready event, and no veil:change event',
+  );
   const warnings = [];
   page.on('console', (message) => {
     if (message.type() === 'warning') {
