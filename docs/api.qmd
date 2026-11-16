@@ -50,6 +50,20 @@ document.addEventListener('veil:change', function (event) {
 });
 ```
 
+When the runtime starts, it applies the state of the document and the URL, then sends one `veil:ready` event on `document`.
+The `detail` of the event is the same object that `state()` returns.
+The start does not send `veil:change`.
+Use `veil:ready` to read the state that shows when the page loads.
+
+```js
+document.addEventListener('veil:ready', function (event) {
+  console.log(event.detail.text);
+});
+```
+
+A script that runs after the start does not get the event.
+When the `<html>` element has the class `veil-ready`, the runtime has started, and `Veil.state()` gives the state.
+
 ## Example
 
 ```js

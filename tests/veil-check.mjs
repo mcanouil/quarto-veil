@@ -100,6 +100,19 @@ async function htmlBasic(t, ctx) {
   t.ok(await page.locator('#div-both').isVisible(), 'the URL state shows the element at load');
   t.equal(await page.evaluate(() => location.search), '?veil=level:2,backup', 'the load does not write the URL');
 
+  const recordEvents = () => {
+    window.veilEvents = [];
+    for (const name of ['veil:ready', 'veil:change']) {
+      document.addEventListener(name, (event) => window.veilEvents.push({ name, text: event.detail.text }));
+    }
+  };
+  ({ page, errors } = await ctx.open('?veil=level:2,backup', { init: recordEvents }));
+  t.equal(
+    JSON.stringify(await page.evaluate(() => window.veilEvents)),
+    JSON.stringify([{ name: 'veil:ready', text: 'level:2,backup,veil' }]),
+    'the start sends one veil:ready event with the state of the URL, and no veil:change event',
+  );
+
   ({ page, errors } = await ctx.open(''));
   await page.keyboard.press(']');
   t.equal(await page.evaluate(() => window.Veil.state().level), 2, '] moves the ladder setting up');
@@ -658,8 +671,9 @@ function context(format, base) {
     // of that context. Without it, each page has its own context.
     // `rewrite` is a pair [from, to]: the context replaces the first text in
     // each HTML response, for example to put a label with markup in the
-    // configuration.
-    async open(query, { ready = true, context = null, rewrite = null } = {}) {
+    // configuration. `init` is a function that runs in the page before its
+    // own scripts.
+    async open(query, { ready = true, context = null, rewrite = null, init = null } = {}) {
       browser = browser || (await launch());
       const owner = context || (await browser.newContext());
       if (rewrite) {
@@ -669,6 +683,9 @@ function context(format, base) {
         });
       }
       const page = await owner.newPage();
+      if (init) {
+        await page.addInitScript(init);
+      }
       const errors = [];
       page.on('pageerror', (error) => errors.push(error.message));
       await page.goto(base + query, { waitUntil: 'load' });
