@@ -122,11 +122,9 @@ extensions:
       style-navbar-tools: false
   code-window:
     style: "macos"
-    # code-window draws a window only for a block with `filename=`, and atelier
-    # adds the language badge beside the name. `auto-filename` stays false
-    # because a derived name repeats that badge. A window bar on every block
-    # waits for atelier support.
-    auto-filename: false
+    # Atelier frames every code block in a window and shows its language once in
+    # the title bar; a block's `filename=` names the window. Set
+    # `auto-filename: false` here to frame only the blocks that have a filename.
 
 # Sets `extensions.atelier.version`, the version atelier shows beside the site
 # title. _scripts/pre-render.sh writes the file from the extension manifest or
