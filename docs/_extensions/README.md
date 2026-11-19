@@ -4,12 +4,16 @@ The extensions here fall into two groups, told apart by where they sit.
 
 ## Committed, under `mcanouil/`
 
-`mcanouil/atelier` and `mcanouil/pastel` are dependencies of the website itself: the project type and theme, and the shared palette.
-They arrive with the scaffold, which carries its own copies, and are checked in like any other Quarto extension.
-Beyond that they are managed for you: [Quarto Wizard](https://m.canouil.dev/quarto-wizard) installs them, and the Quarto Extensions Updates workflow keeps them current by scanning this directory.
+`mcanouil/atelier` is a dependency of the website itself: the project type and theme.
+It arrives with the scaffold, which carries its own copy, and is checked in like any other Quarto extension.
+Beyond that it is managed for you: [Quarto Wizard](https://m.canouil.dev/quarto-wizard) installs it, and the Quarto Extensions Updates workflow keeps it current by scanning this directory.
 
-Atelier includes the iconify, gitlink, code-window, toc-depth, and collapse-output extensions, under `mcanouil/atelier/_extensions/`.
-Do not add a separate copy of one of these extensions here, because both copies then run.
+Atelier includes the code-window, collapse-output, div-reuse, gitlink, highlight-text, iconify, mobile-toc, offset-headings, preview-colour, prism, remember, toc-depth, and veil extensions, under `mcanouil/atelier/_extensions/`.
+Do not add a separate copy of one of these extensions here, unless the site must run that copy.
+When a page names a project copy in `filters`, atelier skips its bundled copy of the same extension, so only the project copy runs.
+
+When this repository publishes one of the extensions above, the site must run the checked-out source rather than the bundled copy.
+In that case the generated `local/veil` copy described below stays, and each page that uses it names it in `filters`.
 
 > [!IMPORTANT]
 > Do not add or update them by hand with the Quarto CLI.

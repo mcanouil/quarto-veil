@@ -1,35 +1,22 @@
 project:
   type: atelier
-  # Generates changelog.qmd from CHANGELOG.md and, in an extension repository,
-  # _variables.yml from the extension manifest, and removes both afterwards.
+  # Generates changelog.qmd from CHANGELOG.md, _atelier-version.yml and, in an
+  # extension repository, _variables.yml from the extension manifest, and
+  # removes all of them afterwards.
   # The leading ./ is required; a bare name fails to spawn. The scripts live in
   # _scripts/, whose leading underscore keeps Quarto from treating it as
   # content.
   pre-render: ./_scripts/pre-render.sh
   post-render: ./_scripts/post-render.sh
-  # Quarto copies nothing to the output directory by convention: only these
-  # globs, plus files it finds behind an `href` or `src` in the rendered HTML.
-  # The manifest names its icons in JSON, which is not scanned, so they are
-  # listed here. The social card is not: Quarto registers a project-relative
-  # the `open-graph` image as a resource itself.
-  resources:
-    - favicon.ico
-    - site.webmanifest
-    - assets/icons/*.png
 
 website:
   title: "Veil"
   description: "Show or hide slides and content by group in Quarto."
-  # No trailing slash: Quarto builds the social image URL by concatenating this
-  # with a leading-slash image path, without normalising.
-  # quarto-dev/quarto-cli#15053 normalises this join. Drop this note once the
-  # minimum Quarto version is the first release after 1.11.6.
   site-url: &site-url https://m.canouil.dev/quarto-veil
   repo-url: https://github.com/mcanouil/quarto-veil
   # The Quarto project root is `docs/`, so without this every edit and issue
   # link points at a path one level up from the page it was built for.
   repo-subdir: docs
-  favicon: favicon.ico
   # The card is declared inside `open-graph` and `twitter-card`, not as
   # `website.image`. Quarto harvests the first image on the page when nothing
   # inside these blocks names one, and that harvest beats `website.image`: a
@@ -39,14 +26,13 @@ website:
   # `<site-url>/assets/social/og-image.png` and measures to fill the image width
   # and height tags. An absolute URL would emit neither: Quarto returns no size
   # for one, then writes that over whatever the configuration set.
-  # _scripts/pre-render.sh writes the file, from GitHub's own preview for this
-  # repository; see assets/social/README.md.
+  # The card is committed; see assets/social/README.md.
   open-graph:
     image: assets/social/og-image.png
-    image-alt: "GitHub's repository card for mcanouil/quarto-veil: the repository name and its one-line description beside the owner's avatar, over the contributor, issue, star, and fork counts."
+    image-alt: "Social card for quarto-veil: the name in monospace over the tagline 'Tag content in groups and show or hide each one per audience.', beside a code window titled document.qmd whose front matter declares a hidden expert group above a div shown only to experts."
   twitter-card:
     image: assets/social/og-image.png
-    image-alt: "GitHub's repository card for mcanouil/quarto-veil: the repository name and its one-line description beside the owner's avatar, over the contributor, issue, star, and fork counts."
+    image-alt: "Social card for quarto-veil: the name in monospace over the tagline 'Tag content in groups and show or hide each one per audience.', beside a code window titled document.qmd whose front matter declares a hidden expert group above a div shown only to experts."
   page-navigation: true
   # atelier defaults search to an overlay button in the navbar. With no navbar
   # the search belongs in the sidebar, as a field rather than a button.
@@ -112,14 +98,6 @@ extensions:
   # scalar here, without a second copy of the string.
   atelier:
     site-url: *site-url
-    # `website.favicon` covers `rel="icon"` alone. These three have no
-    # configuration key of their own, so the social-metadata filter emits them.
-    # Each path is written relative to the site root; the filter leaves it
-    # exactly as it stands, because Quarto's resource resolver already prefixes
-    # every `link[href]` with the page's own offset.
-    icon: assets/icons/icon.svg
-    apple-touch-icon: assets/icons/apple-touch-icon.png
-    manifest: site.webmanifest
     # No `theme-color`: the filter falls back to the brand background of each
     # mode, which is the colour the page is actually painted with.
   gitlink:
@@ -144,29 +122,35 @@ extensions:
       style-navbar-tools: false
   code-window:
     style: "macos"
-    # Blocks here are configuration to copy rather than files to save, so a
-    # filename derived from the language would only add noise.
-    auto-filename: false
+    # Atelier frames every code block in a window and shows its language once in
+    # the title bar; a block's `filename=` names the window. Set
+    # `auto-filename: false` here to frame only the blocks that have a filename.
 
-brand: _extensions/mcanouil/pastel/brand.yml
+# Sets `extensions.atelier.version`, the version atelier shows beside the site
+# title. _scripts/pre-render.sh writes the file from the extension manifest or
+# from CITATION.cff, and _scripts/post-render.sh removes it. Quarto re-reads the
+# configuration after pre-render, and a missing file is skipped, so a render
+# with no version source still works.
+metadata-files:
+  - _atelier-version.yml
+  # Icons and the manifest, which only an extension site has.
+  - _icons.yml
+
+# The preset and any colours live in _brand.yml, which the scaffold writes
+# beside this file.
+brand: _brand.yml
 
 format:
   # Configure the extension format by name. Declaring `html` would replace
   # `atelier-html` rather than configure it, silently dropping the theme, the
   # bundled scripts, and the social-metadata filter.
   atelier-html:
-    # The pastel extension supplies both the brand above and the stylesheet
-    # here, which is why it is wired in twice. It is the shared identity of the
-    # Quarto extension documentation sites, so every one of them looks like the
-    # same family; a project that is not a Quarto extension does not use it.
-    #
     # assets/theme.scss stays last, so a repository can still override an accent.
+    # The terminal preset is dark in both bundles, so both lists are needed.
     theme:
       light:
         - brand
-        - _extensions/mcanouil/pastel/pastel.scss
         - assets/theme.scss
       dark:
         - brand
-        - _extensions/mcanouil/pastel/pastel.scss
         - assets/theme.scss

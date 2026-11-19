@@ -8,21 +8,22 @@
 # @copyright 2026 Mickaël Canouil
 # @author Mickaël Canouil
 #
-# The generated files, changelog.qmd and, in an extension repository,
-# _variables.yml, are ignored by Git and removed by post-render.sh.
+# The generated files, changelog.qmd, _atelier-version.yml and, in an extension
+# repository, _variables.yml, are ignored by Git and removed by post-render.sh.
 #
-# A repository that publishes a Quarto extension also has _scripts/sync-extension.sh
-# beside this script. That copy cannot be made here: Quarto resolves extensions
-# before any pre-render script runs, so the sync is a separate step, run before
-# the render rather than during it.
+# A repository that publishes a Quarto extension also has
+# _scripts/sync-extension.sh beside this script. That copy cannot be made here:
+# Quarto resolves extensions before any pre-render script runs, so the sync is
+# a separate step, run before the render rather than during it.
 #
-# assets/social/og-image.png is ignored by Git as well, but it is a cache rather
-# than a transient, so post-render.sh leaves it in place. It is GitHub's own
-# preview card for this repository, which the endpoint serves for public
-# repositories only: for anything else it answers 200 with a generic Octocat
-# placeholder rather than an error, so the card is checked as well as fetched.
-# A local render and a pull request check both carry on without one; only the
-# render that publishes refuses to. See assets/social/README.md.
+# assets/social/og-image.png is ignored by Git as well, unless the scaffold
+# committed a card there, and then nothing here touches it. Otherwise it is a
+# cache rather than a transient, so post-render.sh leaves it in place. It is
+# GitHub's own preview card for this repository, which the endpoint serves for
+# public repositories only: for anything else it answers 200 with a generic
+# Octocat placeholder rather than an error, so the card is checked as well as
+# fetched. A local render and a pull request check both carry on without one;
+# only the render that publishes refuses to. See assets/social/README.md.
 #
 # A repository that publishes a Quarto extension gets _variables.yml with an
 # `extension` block, carrying the reference a reader installs, so the pages can
@@ -31,6 +32,16 @@
 # project configuration after pre-render, which is what makes a generated
 # variables file work at all. Any other repository gets no variables file from
 # this script.
+#
+# A site also gets _atelier-version.yml, which sets
+# `extensions.atelier.version`, so atelier shows the released version beside
+# the site title. The version comes from the extension manifest, or else from
+# the `version:` line of CITATION.cff at the repository root. With neither, the
+# script says so and writes no file.
+# A `{{< var >}}` shortcode does not work there, because atelier reads the
+# option as plain metadata. `_quarto.yml` loads the file through
+# `metadata-files`, and Quarto merges it into the `extensions.atelier` block
+# that `_quarto.yml` already sets.
 #
 # Version headings are restructured into a three-level hierarchy:
 #
@@ -73,12 +84,23 @@ done
 # where there is one, and otherwise the repository itself.
 PROJECT_NAME="${EXTENSION_NAME:-$(basename "${ROOT_DIR}")}"
 
+# The first plain, single-line `version:` value of a file; a block scalar is
+# not read. Prints nothing when the file has no such line.
+read_version() {
+	sed -n -e '/^version:/{' \
+		-e 's/^version:[[:space:]]*["'\'']\{0,1\}\([^"'\''[:space:]]*\).*/\1/p' \
+		-e q -e '}' "$1"
+}
+
+# The version atelier shows beside the title; empty when there is no source.
+ATELIER_VERSION=""
+
 # The repository the project is published from. Taken from the website
 # configuration rather than the Git remote, so a fork documents the repository
 # it publishes as, and a checkout with no remote still renders.
-REPO_SLUG="$(sed -n \
-	's|^[[:space:]]*repo-url:[[:space:]]*https://github.com/\([^[:space:]]*\)|\1|p' \
-	"${DOCS_DIR}/_quarto.yml" | head -n 1)"
+REPO_SLUG="$(sed -n -e '/^[[:space:]]*repo-url:/{' \
+	-e 's|^[[:space:]]*repo-url:[[:space:]]*https://github.com/\([^[:space:]]*\)|\1|p' \
+	-e q -e '}' "${DOCS_DIR}/_quarto.yml")"
 REPO_SLUG="${REPO_SLUG%/}"
 if [[ -z "${REPO_SLUG}" ]]; then
 	# `|| true` covers the whole pipeline: `git remote get-url` exits 2 when there
@@ -94,9 +116,7 @@ fi
 
 if [[ -n "${EXTENSION_NAME}" ]]; then
 	MANIFEST="${ROOT_DIR}/_extensions/${EXTENSION_NAME}/_extension.yml"
-	VERSION="$(sed -n \
-		's/^version:[[:space:]]*["'\'']\{0,1\}\([^"'\''[:space:]]*\).*/\1/p' \
-		"${MANIFEST}" | head -n 1)"
+	VERSION="$(read_version "${MANIFEST}")"
 	if [[ -z "${VERSION}" ]]; then
 		printf '[pre-render] No version in %s\n' "${MANIFEST}" >&2
 		exit 1
@@ -121,6 +141,22 @@ if [[ -n "${EXTENSION_NAME}" ]]; then
 	} >"${DOCS_DIR}/_variables.yml"
 
 	printf '[pre-render] _variables.yml (%s@%s)\n' "${REPO_SLUG}" "${VERSION}"
+	ATELIER_VERSION="${VERSION}"
+elif [[ -f "${ROOT_DIR}/CITATION.cff" ]]; then
+	ATELIER_VERSION="$(read_version "${ROOT_DIR}/CITATION.cff")"
+fi
+
+if [[ -n "${ATELIER_VERSION}" ]]; then
+	{
+		printf '# Generated by _scripts/pre-render.sh. Do not edit.\n'
+		printf 'extensions:\n'
+		printf '  atelier:\n'
+		printf '    version: "%s"\n' "${ATELIER_VERSION}"
+	} >"${DOCS_DIR}/_atelier-version.yml"
+
+	printf '[pre-render] _atelier-version.yml (%s)\n' "${ATELIER_VERSION}"
+else
+	printf '[pre-render] No extension manifest or CITATION.cff version; not writing _atelier-version.yml\n'
 fi
 
 # The Open Graph card, cached from GitHub's own repository preview. The first
@@ -158,6 +194,20 @@ card_height() {
 	od -An -tx1 -j20 -N4 "$1" 2>/dev/null | tr -d ' \n'
 }
 
+# A card that exists and that Git does not ignore is a committed one, put there
+# by the scaffold from a collection of cards, and is never fetched over or
+# replaced. A fetched cache is ignored by Git, which is what tells the two
+# apart. `check-ignore -q` exits 1 for a path that is not ignored and 0 for one
+# that is. Any other status means there is no work tree to ask, as in a source
+# archive; a card that exists is then kept, so it is never fetched over.
+# The same rule as resolve_social_card in the scaffold's scaffold-docs.sh.
+card_is_committed() {
+	[[ -f "${CARD_PATH}" ]] || return 1
+	local status=0
+	git -C "${DOCS_DIR}" check-ignore -q "${CARD_REL}" 2>/dev/null || status=$?
+	[[ "${status}" -ne 0 ]]
+}
+
 # Shared triage for a render with no real card to show. Anything already cached
 # is better than nothing, a publishing render must not go ahead without one, and
 # a local render or a pull request check is not worth failing.
@@ -189,6 +239,8 @@ card_unavailable() {
 # under pipefail the SIGPIPE that sed then gets would read as no match.
 if ! grep -qF "${CARD_REL}" < <(sed 's/#.*//' "${DOCS_DIR}/_quarto.yml"); then
 	printf '[pre-render] _quarto.yml does not use %s; not fetching the social card\n' "${CARD_REL}"
+elif card_is_committed; then
+	printf '[pre-render] Using the committed social card %s; not fetching\n' "${CARD_REL}"
 elif [[ -n "$(find "${CARD_PATH}" -mtime -1 2>/dev/null)" ]]; then
 	printf '[pre-render] Social card cached under a day ago; not refetching\n'
 elif ! curl -fsSL --max-time 20 --retry 3 --retry-delay 2 --retry-max-time 60 --create-dirs \

@@ -1,0 +1,24 @@
+# Icons and web manifest, for an extension site only. A generic site has none.
+# _quarto.yml lists this file under `metadata-files`, and Quarto merges it into
+# the project configuration, so the chrome files carry no icon keys.
+project:
+  # The manifest names its icons in JSON, which is not scanned, so they are
+  # listed here.
+  resources:
+    - favicon.ico
+    - site.webmanifest
+    - assets/icons/*.png
+
+website:
+  favicon: favicon.ico
+
+extensions:
+  atelier:
+    # `website.favicon` covers `rel="icon"` alone. These three have no
+    # configuration key of their own, so the social-metadata filter emits them.
+    # Each path is written relative to the site root; the filter leaves it
+    # exactly as it stands, because Quarto's resource resolver already prefixes
+    # every `link[href]` with the page's own offset.
+    icon: assets/icons/icon.svg
+    apple-touch-icon: assets/icons/apple-touch-icon.png
+    manifest: site.webmanifest

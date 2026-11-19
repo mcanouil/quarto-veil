@@ -14,7 +14,7 @@ anchor-sections: false
 
 ::: {.atelier-landing}
 
-::: {.atelier-hero .gradient .glow}
+::: {.atelier-hero .centred .gradient .glow}
 
 ::: {.atelier-hero-text}
 
@@ -55,12 +55,6 @@ Install it from your editor with [Quarto Wizard](https://m.canouil.dev/quarto-wi
 :::
 
 :::
-
-:::
-
-::: {.atelier-hero-figure}
-
-[![The Quarto mark, a quartered circle, used as the site icon.](assets/icons/icon.svg){width="320" height="312"}]{}
 
 :::
 

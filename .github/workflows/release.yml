@@ -11,10 +11,13 @@ on:
           - "patch"
           - "minor"
           - "major"
+      # The documentation website uses atelier, which needs Quarto 1.12.1 or
+      # later, a pre-release until Quarto 1.12 is stable. Set this back to
+      # release then.
       quarto:
         type: choice
         description: "Quarto version"
-        default: "release"
+        default: "pre-release"
         options:
           - "release"
           - "pre-release"
