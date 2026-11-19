@@ -11,6 +11,10 @@
 # removed only when the first line marks them as generated, so a hand-written
 # one stays.
 #
+# assets/social/og-image.png is left alone. It is ignored by Git, but
+# pre-render.sh caches it rather than generating it, and a render with no
+# network reuses whatever is there.
+#
 
 set -euo pipefail
 

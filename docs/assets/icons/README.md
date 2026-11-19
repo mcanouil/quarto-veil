@@ -4,7 +4,8 @@
 That is the plain icon, not the wordmark, and not the trademarked lock-up.
 The geometry and the `#74AADB` fill are untouched; only the editor prolog was dropped and `role="img"` with a `<title>` added, so the mark is announced rather than skipped.
 
-Every documentation site in this family carries the same mark.
+Every extension documentation site in this family carries the same mark.
+Other sites have no icon until they have a mark of their own.
 This site flattens the rasters onto the background of its own preset, so regenerate them when the preset changes.
 Replace `icon.svg` only when the extension has a mark of its own, and regenerate all four rasters from it when you do.
 

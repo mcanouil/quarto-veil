@@ -1,6 +1,6 @@
 {
   "name": "Veil",
-  "description": "A Quarto extension.",
+  "description": "Show or hide slides and content by group in Quarto.",
   "lang": "en-GB",
   "icons": [
     {

@@ -1,3 +1,14 @@
+# Sets `extensions.atelier.version`, the version atelier shows beside the site
+# title. _scripts/pre-render.sh writes the file from the extension manifest or
+# from CITATION.cff, and _scripts/post-render.sh removes it. Quarto re-reads the
+# configuration after pre-render, and a missing file is skipped, so a render
+# with no version source still works.
+metadata-files:
+  - _atelier-version.yml
+  # Icons and the manifest, written for an extension site only; a site without
+  # the file is skipped.
+  - _icons.yml
+
 project:
   type: atelier
   # Generates changelog.qmd from CHANGELOG.md and, in an extension repository,
@@ -7,15 +18,6 @@ project:
   # content.
   pre-render: ./_scripts/pre-render.sh
   post-render: ./_scripts/post-render.sh
-  # Quarto copies nothing to the output directory by convention: only these
-  # globs, plus files it finds behind an `href` or `src` in the rendered HTML.
-  # The manifest names its icons in JSON, which is not scanned, so they are
-  # listed here. The social card is not: Quarto registers a project-relative
-  # the `open-graph` image as a resource itself.
-  resources:
-    - favicon.ico
-    - site.webmanifest
-    - assets/icons/*.png
 
 website:
   title: "Veil"
@@ -29,7 +31,6 @@ website:
   # The Quarto project root is `docs/`, so without this every edit and issue
   # link points at a path one level up from the page it was built for.
   repo-subdir: docs
-  favicon: favicon.ico
   # The card is declared inside `open-graph` and `twitter-card`, not as
   # `website.image`. Quarto harvests the first image on the page when nothing
   # inside these blocks names one, and that harvest beats `website.image`: a
@@ -111,16 +112,6 @@ extensions:
   # scalar here, without a second copy of the string.
   atelier:
     site-url: *site-url
-    # `version` comes from _atelier-version.yml, which _scripts/pre-render.sh
-    # writes from the extension manifest; see `metadata-files` below.
-    # `website.favicon` covers `rel="icon"` alone. These three have no
-    # configuration key of their own, so the social-metadata filter emits them.
-    # Each path is written relative to the site root; the filter leaves it
-    # exactly as it stands, because Quarto's resource resolver already prefixes
-    # every `link[href]` with the page's own offset.
-    icon: assets/icons/icon.svg
-    apple-touch-icon: assets/icons/apple-touch-icon.png
-    manifest: site.webmanifest
     # No `theme-color`: the filter falls back to the brand background of each
     # mode, which is the colour the page is actually painted with.
   gitlink:
@@ -149,12 +140,8 @@ extensions:
     # filename derived from the language would only add noise.
     auto-filename: false
 
-# Written by _scripts/pre-render.sh and removed by _scripts/post-render.sh.
-# Quarto re-reads the configuration after pre-render, and a missing file is
-# skipped, so a render that does not run pre-render still works.
-metadata-files:
-  - _atelier-version.yml
-
+# The preset and any colours live in _brand.yml, which the scaffold writes
+# beside this file.
 brand: _brand.yml
 
 format:
@@ -162,9 +149,8 @@ format:
   # `atelier-html` rather than configure it, silently dropping the theme, the
   # bundled scripts, and the social-metadata filter.
   atelier-html:
-    # _brand.yml selects the atelier terminal preset. The light and dark lists
-    # mirror atelier's own, so neither bundle loses the brand. assets/theme.scss
-    # stays last, so a repository can still override an accent.
+    # assets/theme.scss stays last, so a repository can still override an accent.
+    # The terminal preset is dark in both bundles, so both lists are needed.
     theme:
       light:
         - brand
