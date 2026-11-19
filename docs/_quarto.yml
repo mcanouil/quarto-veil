@@ -136,11 +136,11 @@ extensions:
       style-navbar-tools: false
   code-window:
     style: "macos"
-    # Every block gets a window bar labelled with its language. A block's
-    # `filename=` replaces the label, and `code-window-no-auto-filename` opts
-    # one block out. atelier sets this to false in its format defaults, so the
-    # site has to say true.
-    auto-filename: true
+    # code-window draws a window only for a block with `filename=`, and atelier
+    # adds the language badge beside the name. `auto-filename` stays false
+    # because a derived name repeats that badge. A window bar on every block
+    # waits for atelier support.
+    auto-filename: false
 
 # The preset and any colours live in _brand.yml, which the scaffold writes
 # beside this file.
