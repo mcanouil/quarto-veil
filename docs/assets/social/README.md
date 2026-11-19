@@ -8,7 +8,7 @@ It is declared inside those blocks because Quarto's first-image harvest beats a 
 There are two ways it gets here.
 
 A committed card is a PNG that the scaffold copied here with `--social-card <path>`.
-For an extension, the scaffold takes `<repository name>.png` from `~/Projects/perso/quarto-social-cards/social-cards` when that file exists.
+For an extension, the scaffold takes `<repository name>.png` from the `social-cards/` directory of a local `quarto-social-cards` checkout when that file exists.
 The scaffold removes the card from `.gitignore`, so the file is committed.
 `_scripts/pre-render.sh` sees a card that exists and that Git does not ignore, says so, and fetches nothing.
 `image-alt` in `_quarto.yml` then asks you to describe the card, because only you can see what it shows.

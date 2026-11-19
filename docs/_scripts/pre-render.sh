@@ -198,14 +198,14 @@ card_height() {
 # by the scaffold from a collection of cards, and is never fetched over or
 # replaced. A fetched cache is ignored by Git, which is what tells the two
 # apart. `check-ignore -q` exits 1 for a path that is not ignored and 0 for one
-# that is; any other status means there is no work tree to ask, and the card is
-# then treated as a cache, so the fetch logic below applies.
+# that is. Any other status means there is no work tree to ask, as in a source
+# archive; a card that exists is then kept, so it is never fetched over.
 # The same rule as resolve_social_card in the scaffold's scaffold-docs.sh.
 card_is_committed() {
 	[[ -f "${CARD_PATH}" ]] || return 1
 	local status=0
 	git -C "${DOCS_DIR}" check-ignore -q "${CARD_REL}" 2>/dev/null || status=$?
-	[[ "${status}" -eq 1 ]]
+	[[ "${status}" -ne 0 ]]
 }
 
 # Shared triage for a render with no real card to show. Anything already cached
