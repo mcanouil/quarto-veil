@@ -1,14 +1,3 @@
-# Sets `extensions.atelier.version`, the version atelier shows beside the site
-# title. _scripts/pre-render.sh writes the file from the extension manifest or
-# from CITATION.cff, and _scripts/post-render.sh removes it. Quarto re-reads the
-# configuration after pre-render, and a missing file is skipped, so a render
-# with no version source still works.
-metadata-files:
-  - _atelier-version.yml
-  # Icons and the manifest, for an extension site only: the scaffold removes
-  # this entry from any other site.
-  - _icons.yml
-
 project:
   type: atelier
   # Generates changelog.qmd from CHANGELOG.md, _atelier-version.yml and, in an
@@ -140,6 +129,16 @@ extensions:
     # because a derived name repeats that badge. A window bar on every block
     # waits for atelier support.
     auto-filename: false
+
+# Sets `extensions.atelier.version`, the version atelier shows beside the site
+# title. _scripts/pre-render.sh writes the file from the extension manifest or
+# from CITATION.cff, and _scripts/post-render.sh removes it. Quarto re-reads the
+# configuration after pre-render, and a missing file is skipped, so a render
+# with no version source still works.
+metadata-files:
+  - _atelier-version.yml
+  # Icons and the manifest, which only an extension site has.
+  - _icons.yml
 
 # The preset and any colours live in _brand.yml, which the scaffold writes
 # beside this file.

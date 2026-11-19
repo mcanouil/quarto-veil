@@ -84,15 +84,23 @@ done
 # where there is one, and otherwise the repository itself.
 PROJECT_NAME="${EXTENSION_NAME:-$(basename "${ROOT_DIR}")}"
 
+# The first plain, single-line `version:` value of a file; a block scalar is
+# not read. Prints nothing when the file has no such line.
+read_version() {
+	sed -n -e '/^version:/{' \
+		-e 's/^version:[[:space:]]*["'\'']\{0,1\}\([^"'\''[:space:]]*\).*/\1/p' \
+		-e q -e '}' "$1"
+}
+
 # The version atelier shows beside the title; empty when there is no source.
 ATELIER_VERSION=""
 
 # The repository the project is published from. Taken from the website
 # configuration rather than the Git remote, so a fork documents the repository
 # it publishes as, and a checkout with no remote still renders.
-REPO_SLUG="$(sed -n \
-	's|^[[:space:]]*repo-url:[[:space:]]*https://github.com/\([^[:space:]]*\)|\1|p' \
-	"${DOCS_DIR}/_quarto.yml" | head -n 1)"
+REPO_SLUG="$(sed -n -e '/^[[:space:]]*repo-url:/{' \
+	-e 's|^[[:space:]]*repo-url:[[:space:]]*https://github.com/\([^[:space:]]*\)|\1|p' \
+	-e q -e '}' "${DOCS_DIR}/_quarto.yml")"
 REPO_SLUG="${REPO_SLUG%/}"
 if [[ -z "${REPO_SLUG}" ]]; then
 	# `|| true` covers the whole pipeline: `git remote get-url` exits 2 when there
@@ -108,9 +116,7 @@ fi
 
 if [[ -n "${EXTENSION_NAME}" ]]; then
 	MANIFEST="${ROOT_DIR}/_extensions/${EXTENSION_NAME}/_extension.yml"
-	VERSION="$(sed -n \
-		's/^version:[[:space:]]*["'\'']\{0,1\}\([^"'\''[:space:]]*\).*/\1/p' \
-		"${MANIFEST}" | head -n 1)"
+	VERSION="$(read_version "${MANIFEST}")"
 	if [[ -z "${VERSION}" ]]; then
 		printf '[pre-render] No version in %s\n' "${MANIFEST}" >&2
 		exit 1
@@ -137,10 +143,7 @@ if [[ -n "${EXTENSION_NAME}" ]]; then
 	printf '[pre-render] _variables.yml (%s@%s)\n' "${REPO_SLUG}" "${VERSION}"
 	ATELIER_VERSION="${VERSION}"
 elif [[ -f "${ROOT_DIR}/CITATION.cff" ]]; then
-	# Only a plain, single-line `version:` value is read; a block scalar is not.
-	ATELIER_VERSION="$(sed -n \
-		's/^version:[[:space:]]*["'\'']\{0,1\}\([^"'\''[:space:]]*\).*/\1/p' \
-		"${ROOT_DIR}/CITATION.cff" | head -n 1)"
+	ATELIER_VERSION="$(read_version "${ROOT_DIR}/CITATION.cff")"
 fi
 
 if [[ -n "${ATELIER_VERSION}" ]]; then
@@ -194,12 +197,15 @@ card_height() {
 # A card that exists and that Git does not ignore is a committed one, put there
 # by the scaffold from a collection of cards, and is never fetched over or
 # replaced. A fetched cache is ignored by Git, which is what tells the two
-# apart. Outside a Git work tree `check-ignore` cannot answer, so the card is
-# treated as a cache and the fetch logic below applies, as it always did.
+# apart. `check-ignore -q` exits 1 for a path that is not ignored and 0 for one
+# that is; any other status means there is no work tree to ask, and the card is
+# then treated as a cache, so the fetch logic below applies.
+# The same rule as resolve_social_card in the scaffold's scaffold-docs.sh.
 card_is_committed() {
 	[[ -f "${CARD_PATH}" ]] || return 1
-	git -C "${DOCS_DIR}" rev-parse --is-inside-work-tree >/dev/null 2>&1 || return 1
-	! git -C "${DOCS_DIR}" check-ignore -q "${CARD_REL}"
+	local status=0
+	git -C "${DOCS_DIR}" check-ignore -q "${CARD_REL}" 2>/dev/null || status=$?
+	[[ "${status}" -eq 1 ]]
 }
 
 # Shared triage for a render with no real card to show. Anything already cached
