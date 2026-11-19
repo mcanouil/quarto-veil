@@ -11,8 +11,9 @@ metadata-files:
 
 project:
   type: atelier
-  # Generates changelog.qmd from CHANGELOG.md and, in an extension repository,
-  # _variables.yml from the extension manifest, and removes both afterwards.
+  # Generates changelog.qmd from CHANGELOG.md, _atelier-version.yml and, in an
+  # extension repository, _variables.yml from the extension manifest, and
+  # removes all of them afterwards.
   # The leading ./ is required; a bare name fails to spawn. The scripts live in
   # _scripts/, whose leading underscore keeps Quarto from treating it as
   # content.
@@ -24,8 +25,6 @@ website:
   description: "Show or hide slides and content by group in Quarto."
   # No trailing slash: Quarto builds the social image URL by concatenating this
   # with a leading-slash image path, without normalising.
-  # quarto-dev/quarto-cli#15053 normalises this join. Drop this note once the
-  # minimum Quarto version is the first release after 1.11.6.
   site-url: &site-url https://m.canouil.dev/quarto-veil
   repo-url: https://github.com/mcanouil/quarto-veil
   # The Quarto project root is `docs/`, so without this every edit and issue
