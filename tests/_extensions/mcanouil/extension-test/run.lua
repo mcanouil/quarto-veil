@@ -195,7 +195,8 @@ end
 --- Detect the Quarto version and channel.
 --- @return table
 local function quarto_environment()
-  local code, output = util.capture('quarto --version')
+  -- Only the version on standard output is read, as for `quarto inspect`.
+  local code, output = util.capture('{ quarto --version 2> /dev/null; }')
   local version = util.trim(output)
   if code ~= 0 then
     version = 'unknown'
@@ -384,7 +385,7 @@ local function main(argv)
   end
 
   if options.unstage then
-    stage.unstage(options.tests)
+    stage.unstage(options.tests, render.project_dirs(render.discover(options.root, options.tests)))
     return 0
   end
   if options.stage then

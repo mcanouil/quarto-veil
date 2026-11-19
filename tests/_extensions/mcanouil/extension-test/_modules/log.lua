@@ -30,11 +30,12 @@ local function strip_ansi(text)
 end
 
 --- The level of one line, raised by the markers quarto-cli passes on.
+--- Typst writes a compile warning as `warning: ` at the start of a line.
 --- @param line string
 --- @param record_level string
 --- @return string
 local function line_level(line, record_level)
-  if line:match('^%(W%) ') or line:match('^WARNING') or line:match('^%[WARNING%]') then
+  if line:match('^%(W%) ') or line:match('^WARNING') or line:match('^%[WARNING%]') or line:match('^warning: ') then
     return 'WARN'
   end
   if line:match('^%(E%) ') or line:match('^ERROR') or line:match('^FATAL') or line:match('^%[ERROR%]') then
@@ -148,6 +149,24 @@ function M.messages_at(lines, level)
     end
   end
   return out
+end
+
+--- The path of the last `Output created` line, as Quarto wrote it.
+---
+--- `quarto inspect` reports no output name for a project. A book names its
+--- single-file output after its title, so the log is the one place that
+--- tells where the render wrote. Quarto writes the path relative to the
+--- project directory.
+--- @param lines table[]
+--- @return string|nil
+function M.output_created(lines)
+  for index = #lines, 1, -1 do
+    local found = lines[index].message:match('^Output created: (.-)%s*$')
+    if found and found ~= '' then
+      return found
+    end
+  end
+  return nil
 end
 
 return M

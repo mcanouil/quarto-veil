@@ -142,6 +142,7 @@ $border-color: null;
   --atelier-surface-strong: #{$atelier-surface-strong};
   --atelier-border: #{$atelier-border};
   --atelier-control-border: #{$atelier-control-border};
+  --atelier-code-border: var(--atelier-border);
   --atelier-muted: #{$atelier-text-muted};
   --atelier-accent-soft: #{$atelier-accent-soft};
   --atelier-accent-ink: #{$atelier-accent-ink};
@@ -513,6 +514,10 @@ main:has(> .atelier-landing) > #title-block-header {
     height: auto;
   }
 
+  img.atelier-wide-image {
+    max-width: 100%;
+  }
+
   p {
     margin: 0;
   }
@@ -738,7 +743,11 @@ main:has(> .atelier-landing) > #title-block-header {
     grid-template-columns: 1.3fr 1fr;
   }
 
-  .atelier-hero.centred {
+  // `atelier-chrome.lua` marks a hero whose image is wide, such as a social
+  // card. Its text is only readable at about the full width of the hero, so
+  // the figure goes below the text, as on a small screen.
+  .atelier-hero.centred,
+  .atelier-hero.atelier-wide-figure {
     grid-template-columns: 1fr;
   }
 
@@ -758,7 +767,7 @@ html div.sourceCode {
   @if $code-block-bg {
     background-color: var(--atelier-surface);
   }
-  border: 1px solid var(--atelier-border);
+  border: 1px solid var(--atelier-code-border);
   border-radius: $border-radius-sm;
 }
 
@@ -772,7 +781,7 @@ html pre:not(.sourceCode) {
   } @else {
     background-color: transparent;
   }
-  border: 1px solid var(--atelier-border);
+  border: 1px solid var(--atelier-code-border);
   border-radius: $border-radius-sm;
   padding: $code-block-bg-padding;
 }
@@ -882,16 +891,33 @@ html .quarto-dark .code-with-filename .code-with-filename-file {
 // title bar divider uses the same border colour.
 html .code-with-filename {
   margin: 1rem 0;
-  border-color: var(--atelier-border);
+  border-color: var(--atelier-code-border);
   border-radius: $border-radius-sm;
 }
 
 html .code-with-filename .code-with-filename-file {
-  border-bottom-color: var(--atelier-border);
+  border-bottom-color: var(--atelier-code-border);
 }
 
 html .code-with-filename .code-copy-outer-scaffold {
   border-radius: 0 0 $border-radius-sm $border-radius-sm;
+}
+
+// Quarto pads the last child of a titled callout body, and the last child of
+// each `div` in it. In a filename block, that child is the copy scaffold, or
+// the block itself when it ends the callout or a cell, so an empty band shows
+// below the code inside the frame. Remove the padding. A block that ends the
+// callout or a cell keeps the space as a margin, outside the frame.
+// Upstream: https://github.com/quarto-dev/quarto-cli/issues/15382
+// Remove when: the minimum Quarto version includes the fix.
+html .callout.callout-titled .callout-body > .code-with-filename > .code-copy-outer-scaffold:last-child {
+  padding-bottom: 0;
+}
+
+html .callout.callout-titled .callout-body > .code-with-filename:last-child,
+html .callout.callout-titled .callout-body > div > .code-with-filename:last-child {
+  padding-bottom: 0;
+  margin-bottom: 0.5rem;
 }
 
 // A closed collapsible window sets its 8px radius again, on the window and on
@@ -1105,30 +1131,6 @@ body.docked {
   .sidebar-title > a:hover,
   .sidebar-title > a:focus-visible {
     color: var(--atelier-sidebar-accent);
-  }
-
-  // Quarto renders the sidebar tools inside `.sidebar-title` whenever the
-  // sidebar has a title and the project has no navbar, as an inline-flex
-  // pulled up 6px, which lands the colour-scheme toggle on the title's line.
-  // A block-level flex row breaks it onto its own line, which the document
-  // order then places above the search field. Nothing here is forced: the
-  // gitlink extension stacks the same container into a column from an id
-  // selector when its widget is one of the tools.
-  .sidebar-title .sidebar-tools-main {
-    display: flex;
-    justify-content: flex-start;
-    margin-top: 0.5rem;
-  }
-
-  // `sidebar.align` reaches the header as a text class, which a flex row does
-  // not follow. Bootstrap has no `text-left`, so the rule above covers the
-  // left-aligned case on its own.
-  .sidebar-header.text-center .sidebar-title .sidebar-tools-main {
-    justify-content: center;
-  }
-
-  .sidebar-header.text-end .sidebar-title .sidebar-tools-main {
-    justify-content: flex-end;
   }
 
   // Quarto dims the sidebar tools to 0.7, which on the dark column drops the
