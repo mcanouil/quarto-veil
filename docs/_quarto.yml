@@ -40,7 +40,7 @@ website:
   # `<site-url>/assets/social/og-image.png` and measures to fill the image width
   # and height tags. An absolute URL would emit neither: Quarto returns no size
   # for one, then writes that over whatever the configuration set.
-  # The card is committed, made with quarto-social-cards; see assets/social/README.md.
+  # The card is committed; see assets/social/README.md.
   open-graph:
     image: assets/social/og-image.png
     image-alt: "Social card for quarto-veil: the name in monospace over the tagline 'Tag content in groups and show or hide each one per audience.', beside a code window titled document.qmd whose front matter declares a hidden expert group above a div shown only to experts."
