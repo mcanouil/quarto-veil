@@ -10,11 +10,11 @@ It arrives with the scaffold, which carries its own copy, and it is checked in l
 Beyond that it is managed for you: [Quarto Wizard](https://m.canouil.dev/quarto-wizard) installs it, and the Quarto Extensions Updates workflow keeps it current by scanning this directory.
 
 Atelier includes the code-window, collapse-output, div-reuse, gitlink, highlight-text, iconify, mobile-toc, offset-headings, preview-colour, prism, remember, toc-depth, and veil extensions, under `mcanouil/atelier/_extensions/`.
-Do not add a separate copy of one of these extensions here, because both copies then run.
+Do not add a separate copy of one of these extensions here, unless the site must run that copy.
+When a page names a project copy in `filters`, atelier skips its bundled copy of the same extension, so only the project copy runs.
 
-Veil is the exception.
-The site must show the checked-out source, so `local/veil` stays, and veil runs twice on each page that names it in `filters`.
-This stays until atelier can turn off a bundled copy.
+Veil is such a copy.
+The site must show the checked-out source, so `local/veil` stays, and each page that uses veil names it in `filters`.
 
 > [!IMPORTANT]
 > Do not add or update it by hand with the Quarto CLI.
