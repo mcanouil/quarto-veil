@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- docs: Move the documentation site to atelier 0.15 and its terminal preset. (#13)
+
 ## 0.4.0 (2026-11-16)
 
 - fix: Hide the Quarto back-to-top link while the popover is open at the bottom of the screen, so the link no longer peeks out from under the popover. (#10)
