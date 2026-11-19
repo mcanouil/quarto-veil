@@ -5,8 +5,8 @@
 # with no version source still works.
 metadata-files:
   - _atelier-version.yml
-  # Icons and the manifest, written for an extension site only; a site without
-  # the file is skipped.
+  # Icons and the manifest, for an extension site only: the scaffold removes
+  # this entry from any other site.
   - _icons.yml
 
 project:

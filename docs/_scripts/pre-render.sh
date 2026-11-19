@@ -8,22 +8,22 @@
 # @copyright 2026 Mickaël Canouil
 # @author Mickaël Canouil
 #
-# The generated files, changelog.qmd and, in an extension repository,
-# _variables.yml, are ignored by Git and removed by post-render.sh.
+# The generated files, changelog.qmd, _atelier-version.yml and, in an extension
+# repository, _variables.yml, are ignored by Git and removed by post-render.sh.
 #
-# A repository that publishes a Quarto extension also has _scripts/sync-extension.sh
-# beside this script. That copy cannot be made here: Quarto resolves extensions
-# before any pre-render script runs, so the sync is a separate step, run before
-# the render rather than during it.
+# A repository that publishes a Quarto extension also has
+# _scripts/sync-extension.sh beside this script. That copy cannot be made here:
+# Quarto resolves extensions before any pre-render script runs, so the sync is
+# a separate step, run before the render rather than during it.
 #
 # assets/social/og-image.png is ignored by Git as well, unless the scaffold
-# committed a card there, and then nothing here touches it. Otherwise it is a cache rather
-# than a transient, so post-render.sh leaves it in place. It is GitHub's own
-# preview card for this repository, which the endpoint serves for public
-# repositories only: for anything else it answers 200 with a generic Octocat
-# placeholder rather than an error, so the card is checked as well as fetched.
-# A local render and a pull request check both carry on without one; only the
-# render that publishes refuses to. See assets/social/README.md.
+# committed a card there, and then nothing here touches it. Otherwise it is a
+# cache rather than a transient, so post-render.sh leaves it in place. It is
+# GitHub's own preview card for this repository, which the endpoint serves for
+# public repositories only: for anything else it answers 200 with a generic
+# Octocat placeholder rather than an error, so the card is checked as well as
+# fetched. A local render and a pull request check both carry on without one;
+# only the render that publishes refuses to. See assets/social/README.md.
 #
 # A repository that publishes a Quarto extension gets _variables.yml with an
 # `extension` block, carrying the reference a reader installs, so the pages can
@@ -33,10 +33,11 @@
 # variables file work at all. Any other repository gets no variables file from
 # this script.
 #
-# A site also gets _atelier-version.yml, which sets `extensions.atelier.version`,
-# so atelier shows the released version beside the site title. The version comes
-# from the extension manifest, or else from the `version:` line of CITATION.cff
-# at the repository root. With neither, the script says so and writes no file.
+# A site also gets _atelier-version.yml, which sets
+# `extensions.atelier.version`, so atelier shows the released version beside
+# the site title. The version comes from the extension manifest, or else from
+# the `version:` line of CITATION.cff at the repository root. With neither, the
+# script says so and writes no file.
 # A `{{< var >}}` shortcode does not work there, because atelier reads the
 # option as plain metadata. `_quarto.yml` loads the file through
 # `metadata-files`, and Quarto merges it into the `extensions.atelier` block
@@ -136,6 +137,7 @@ if [[ -n "${EXTENSION_NAME}" ]]; then
 	printf '[pre-render] _variables.yml (%s@%s)\n' "${REPO_SLUG}" "${VERSION}"
 	ATELIER_VERSION="${VERSION}"
 elif [[ -f "${ROOT_DIR}/CITATION.cff" ]]; then
+	# Only a plain, single-line `version:` value is read; a block scalar is not.
 	ATELIER_VERSION="$(sed -n \
 		's/^version:[[:space:]]*["'\'']\{0,1\}\([^"'\''[:space:]]*\).*/\1/p' \
 		"${ROOT_DIR}/CITATION.cff" | head -n 1)"
