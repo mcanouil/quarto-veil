@@ -30,7 +30,7 @@ That matters most for the alt text: it describes a real card, and a placeholder 
 The file is cached locally rather than linked as a remote URL on purpose.
 Quarto measures a project-relative image to fill `og:image:width` and `og:image:height`, and returns no size at all for an absolute one, so linking the endpoint directly would drop both tags and make every scraper lay the card out only after the image had downloaded.
 
-To refresh it by hand:
+To refresh a fetched card by hand (never run this over a committed card):
 
 ```bash
 curl -fsSL --max-time 20 "https://opengraph.githubassets.com/1/<owner>/<repo>" -o og-image.png

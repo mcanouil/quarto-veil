@@ -12,8 +12,6 @@ project:
 website:
   title: "Veil"
   description: "Show or hide slides and content by group in Quarto."
-  # No trailing slash: Quarto builds the social image URL by concatenating this
-  # with a leading-slash image path, without normalising.
   site-url: &site-url https://m.canouil.dev/quarto-veil
   repo-url: https://github.com/mcanouil/quarto-veil
   # The Quarto project root is `docs/`, so without this every edit and issue
