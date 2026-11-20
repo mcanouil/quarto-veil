@@ -1,6 +1,6 @@
 title: Atelier
 author: Mickaël Canouil
-version: 0.15.0
+version: 0.15.1
 quarto-required: ">=1.12.1"
 contributes:
   project:
@@ -156,6 +156,8 @@ contributes:
           page-exclude:
             - index.qmd
             - 404.qmd
+      include-in-header:
+        - file: html/scripts/page-load.html
       include-after-body:
         - file: html/scripts/current-year.html
         - file: html/scripts/external-links.html
@@ -173,5 +175,5 @@ contributes:
         - file: html/scripts/code-blocks.html
         - file: html/scripts/listings.html
         - file: html/scripts/table-scroll.html
-source: mcanouil/quarto-atelier@0.15.0
+source: mcanouil/quarto-atelier@0.15.1
 source-type: registry
