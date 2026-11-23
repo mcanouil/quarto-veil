@@ -7,7 +7,7 @@ A hidden slide leaves the deck, so the slide numbers, the progress bar, and the 
 ## Installation
 
 ```bash
-quarto add mcanouil/quarto-veil@0.4.2
+quarto add mcanouil/quarto-veil@0.4.3
 ```
 
 This will install the extension under the `_extensions` subdirectory.
