@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- docs: Update the documentation site to atelier 0.15.2.
+
 ## 0.4.1 (2026-11-20)
 
 - docs: Move the documentation site to atelier 0.15 and its terminal preset. (#13)
