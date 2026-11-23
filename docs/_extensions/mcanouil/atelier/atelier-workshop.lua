@@ -8,7 +8,9 @@
 --- holds the mode from `extensions.atelier.mode`, the project offset, the
 --- translated labels, and, in workshop mode, the page duration, the sidebar
 --- that lists the page, and the durations of every page in that sidebar.
---- A workshop page also gets the `atelier-workshop` class on `<html>`.
+--- A workshop page also gets the `atelier-workshop` class on `<html>`, and
+--- a workshop page that no listed sidebar holds also gets
+--- `atelier-workshop-unlisted`.
 
 --- Load modules
 local str = require(quarto.utils.resolve_path('_vendor/quarto-lua-modules/string.lua'):gsub('%.lua$', ''))
@@ -568,9 +570,14 @@ local function publish_workshop(meta)
         data.durations = durations
       end
     end
+    -- An unlisted page gets no workshop bar, so its CSS must not reserve the bar row.
+    local classes = '"atelier-workshop"'
+    if not data.listed then
+      classes = classes .. ', "atelier-workshop-unlisted"'
+    end
     quarto.doc.include_text(
       'in-header',
-      '<script>document.documentElement.classList.add("atelier-workshop");</script>'
+      '<script>document.documentElement.classList.add(' .. classes .. ');</script>'
     )
     apply_title_labels(meta, state.labels)
     changed = meta
@@ -851,8 +858,9 @@ end
 --- A command that ends with `\` goes on to the next line. The numbers of these
 --- next lines join `atelier-continuation`, and the style gives them the command
 --- colour with no prompt. An indented `$` line is output, as in usage text.
---- A block with no `filename`, or an empty one, gets the `terminal` label in
---- `code-window-auto-label`, so Code Window draws a window with that label.
+--- The block gets the `terminal` label in `code-window-auto-label`.
+--- Code Window uses this label only for a block with no `filename`.
+--- A block with `filename=""` keeps a title bar with no name.
 --- This filter runs before Code Window. A `filename`, `code-window-auto-label`,
 --- `code-window-enabled`, or `code-window-no-auto-filename` on the block still
 --- wins.
@@ -904,10 +912,7 @@ local function style_terminal(block)
   if #continuations > 0 then
     block.attributes['atelier-continuation'] = table.concat(continuations, ',')
   end
-  if (block.attributes.filename or '') == '' and (block.attributes['code-window-auto-label'] or '') == '' then
-    -- Code Window keeps a block with `filename=""` as Quarto's own window, with
-    -- no name, so the empty attribute goes and the label applies.
-    block.attributes.filename = nil
+  if (block.attributes['code-window-auto-label'] or '') == '' then
     block.attributes['code-window-auto-label'] = state.labels.terminal
   end
   return block
