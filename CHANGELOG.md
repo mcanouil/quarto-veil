@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.4.3 (2026-11-23)
+
 - docs: Update the documentation site to atelier 0.15.3.
 
 ## 0.4.2 (2026-11-23)
