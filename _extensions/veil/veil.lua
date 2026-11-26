@@ -211,7 +211,7 @@ local function read_meta(meta)
   end
   known = groups_with_state_names(options)
   resolved = resolve_state(options, known)
-  slide_level = tonumber(as_string(meta['slide-level'])) or PANDOC_WRITER_OPTIONS.slide_level or 2
+  slide_level = tonumber(as_string(meta['slide-level'])) or tonumber(PANDOC_WRITER_OPTIONS.slide_level) or 2
   strings = language.strings(meta)
   collect.configure(resolved, not has_runtime())
   return meta

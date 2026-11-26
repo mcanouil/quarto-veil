@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix: Fall back to slide level 2 when the writer gives no number for it, so Reveal.js decks render with Quarto 2.
+
 ## 0.4.3 (2026-11-23)
 
 - docs: Update the documentation site to atelier 0.15.3.
